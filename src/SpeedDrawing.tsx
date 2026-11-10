@@ -1,12 +1,43 @@
-import React,{useEffect,useState}from'react';
-import{ArrowRight,ArrowLeft,Play,Pause,RotateCcw,Eye}from'lucide-react';
-import{memoryRound,memoryScores,type MemoryRound,type Settings}from'./engine';
-type Props={settings:Settings,memory?:MemoryRound,remaining:number,running:boolean,onChange:(memory:MemoryRound,finish?:boolean)=>void,onTimer:()=>void,onDuration:(seconds:number)=>void,onAgain:()=>void,onChoose:()=>void};
-export default function SpeedDrawing({settings,memory,remaining,running,onChange,onTimer,onDuration,onAgain,onChoose}:Props){
- const [initial]=useState(()=>memoryRound(settings));const m=memory||initial;
- useEffect(()=>{if(!memory)onChange(initial)},[memory]);
- const names=settings.mode==='Cooperative'?['Family team']:settings.players;const scores=memoryScores(m);
- function change(p:Partial<MemoryRound>){onChange({...m,...p})}
- if(m.phase==='done')return <div className="finish"><span className="finish-icon">✳</span><span className="eyebrow">SIXTEEN LITTLE SKETCHES. ONE BIG MEMORY TEST.</span><h1>How much did you remember?</h1><p>One point for each item recalled in its correct position. Maximum: 16.</p>{names.map((name,i)=><p key={i}><strong>{name}</strong> · {scores[i]} / 16</p>)}{settings.mode!=='Cooperative'&&<h2>{names.filter((_,i)=>scores[i]===Math.max(...scores)).join(' & ')} {scores.filter(n=>n===Math.max(...scores)).length>1?'tie for the lead!':'wins!'}</h2>}<button className="primary" onClick={onAgain}><RotateCcw size={18}/> Play again, fresh items</button><button className="secondary" onClick={onChoose}>Choose another game</button></div>;
- return <div className="memory-game"><div className="game-title"><span className="eyebrow">DRAW → HIDE → REMEMBER → CHECK</span><h1>Speed Drawing</h1><p>{m.phase==='draw'?`Item ${m.index+1} of 16 · Everyone draws`:m.phase==='score'?`Checking position ${m.review+1} of 16`:m.phase==='cover'?'Drawings away. Memory on.':'Recall time · No peeking'}</p></div><section className="challenge-panel memory-panel"><div className="challenge-top"><span className="eyebrow">{m.phase==='draw'?'READ THIS ITEM ALOUD':m.phase==='score'?'PARENT’S ANSWER CHECK':'KEEP THE DRAWINGS HIDDEN'}</span><span className="parent-note">Parent’s guide only</span></div>{m.phase==='draw'?<><p className="instructions">Read the item aloud. Everyone quickly draws it in order on their own paper. Read each new item only when everyone is ready.</p><h2 className="memory-item">{m.items[m.index]}</h2><div className="timer"><span>{Math.floor(remaining/60).toString().padStart(2,'0')}:{(remaining%60).toString().padStart(2,'0')}</span><button className="round-button" aria-label={running?'Pause timer':'Start timer'} onClick={onTimer}>{running?<Pause size={20}/>:<Play size={20}/>}</button><select aria-label="Time per item" value={settings.timer} onChange={e=>onDuration(+e.target.value)}>{[15,30,45,60].map(n=><option key={n} value={n}>{n} sec / item</option>)}</select>{remaining===0&&<span role="status">Time’s up! Ready for the next item?</span>}</div><button className="primary wide" onClick={()=>change(m.index===15?{phase:'cover'}:{index:m.index+1})}>{m.index===15?'All 16 drawn — hide the drawings':'Next item'} <ArrowRight size={18}/></button><p className="small center">No guessing or points yet. Save your memory for the whole sequence.</p></>:m.phase==='cover'?<><h2>Turn every drawing face down.</h2><p>Put the drawings out of sight. Give everyone a fresh sheet of paper and ask them to number it 1–16. They must not look back at their drawings during recall.</p><button className="primary wide" onClick={()=>change({phase:'recall'})}>Drawings hidden — begin recall <ArrowRight size={18}/></button></>:m.phase==='recall'?<><h2>What did you draw, and in what order?</h2><p>Without looking at the drawings, each player writes the 16 items from memory in positions 1–16. Leave a blank for any item they cannot remember.</p><p className="hint">Keep all drawings hidden until everyone has finished writing their recall answers. The item list stays hidden here too.</p><button className="primary wide" onClick={()=>change({phase:'score',review:0})}><Eye size={18}/> Everyone finished — check answers</button></>:<><p className="instructions">Recall answers are now final. Compare position {m.review+1} on each player’s recall sheet with the item below. Tick only players who remembered this item in this position.</p><h2 className="memory-item"><span className="memory-position">{m.review+1}.</span> {m.items[m.review]}</h2><div className="memory-marks">{names.map((name,i)=><label className="memory-mark" key={i}><input type="checkbox" checked={m.marks[i][m.review]} onChange={e=>change({marks:m.marks.map((row,j)=>j===i?row.map((v,k)=>k===m.review?e.target.checked:v):row)})}/><span>{name}<small>Correct item in the correct position</small></span><b>{scores[i]} / 16</b></label>)}</div><div className="actions"><button className="secondary" disabled={m.review===0} onClick={()=>change({review:m.review-1})}><ArrowLeft size={16}/> Previous position</button><button className="primary" onClick={()=>m.review===15?onChange({...m,phase:'done'},true):change({review:m.review+1})}>{m.review===15?'Tally final scores':'Next position'} <ArrowRight size={18}/></button></div><p className="small">Unticked = 0 points. A remembered item in the wrong position earns 0 points. You can revisit positions before tallying.</p></>}</section></div>
+import React, {useEffect, useState} from 'react';
+import {ArrowLeft, RotateCcw} from 'lucide-react';
+import {createSpeedRound, toggleSpeedCard, type SpeedRound} from './drawingDeck';
+
+type Props = {
+  state?: SpeedRound;
+  onChange: (state: SpeedRound) => void;
+  onLeave: () => void;
+};
+
+export default function SpeedDrawing({state, onChange, onLeave}: Props) {
+  const [initial] = useState(() => createSpeedRound());
+  const game = state || initial;
+  useEffect(() => { if (!state) onChange(initial); }, [state]);
+  const revealed = game.revealed.filter(Boolean).length;
+
+  function reset() {
+    onChange(createSpeedRound(game));
+    window.scrollTo({top: 0, behavior: 'instant'});
+  }
+
+  return <section className="speed-game" aria-labelledby="speed-title">
+    <header className="speed-heading">
+      <div><h1 id="speed-title">Speed Drawing</h1><p>Reveal a card. Draw on paper. Guess together.</p></div>
+      <button className="speed-leave" aria-label="Back to games" onClick={onLeave}><ArrowLeft size={20}/></button>
+      <div className="speed-status" aria-live="polite" aria-atomic="true"><strong>Round {game.round}</strong><span>{revealed}/16 revealed</span></div>
+    </header>
+    <div className="mystery-grid" aria-label="16 mystery drawing cards">
+      {game.items.map((word, index) => <button
+        key={index}
+        type="button"
+        className={`mystery-card${game.revealed[index] ? ' is-revealed' : ''}`}
+        aria-pressed={game.revealed[index]}
+        aria-label={`Card ${index + 1}${game.revealed[index] ? `: ${word}. Tap to hide` : '. Tap to reveal'}`}
+        onClick={() => onChange(toggleSpeedCard(game, index))}
+      >{game.revealed[index]
+        ? <><span className="revealed-number">{index + 1}</span><span className="mystery-word">{word}</span></>
+        : <><span className="mystery-number">{index + 1}</span><span className="mystery-instruction">Tap to reveal</span></>}
+      </button>)}
+    </div>
+    <div className="speed-reset"><button className="primary wide" onClick={reset}><RotateCcw size={18}/>Reset – New 16 Words</button></div>
+  </section>;
 }

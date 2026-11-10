@@ -1,0 +1,65 @@
+/** All content is bundled locally. No network or AI service is used. */
+export const drawingCategories: Record<string, string[]> = {
+  Animals: ['Elephant','Giraffe','Camel','Flamingo','Octopus','Dinosaur','Penguin','Kangaroo','Crocodile','Turtle','Lion','Tiger','Zebra','Panda','Koala','Rabbit','Fox','Owl','Dolphin','Whale','Shark','Seahorse','Jellyfish','Peacock','Hedgehog'],
+  Objects: ['Umbrella','Teapot','Backpack','Telescope','Camera','Clock','Candle','Key','Scissors','Glasses','Chair','Ladder','Balloon','Kite','Guitar','Drum','Crown','Treasure chest','Compass','Binoculars','Telephone','Paintbrush','Magnet','Spinning top','Lantern'],
+  Food: ['Pizza','Ice cream','Birthday cake','Watermelon','Pineapple','Banana','Apple','Strawberry','Carrot','Broccoli','Cupcake','Doughnut','Sandwich','Pancakes','Popcorn','Cookie','Cheese','Cherries','Pear','Lemon','Corn on the cob','Croissant','Spaghetti','Taco','Bowl of soup'],
+  Vehicles: ['Rocket','Helicopter','UFO','Airplane','Bicycle','Motorcycle','Fire engine','Ambulance','School bus','Taxi','Train','Tractor','Submarine','Sailboat','Pirate ship','Hot air balloon','Unicycle','Skateboard','Scooter','Rowboat','Dump truck','Race car','Cable car','Snowmobile','Space rover'],
+  Characters: ['Superhero','Pirate','Astronaut','King','Queen','Princess','Knight','Robot','Ninja','Detective','Clown','Ballerina','Cowboy','Wizard','Explorer','Viking','Samurai','Magician','Circus acrobat','Lifeguard'],
+  Places: ['Castle','Lighthouse','Treehouse','Farm','Zoo','Playground','Beach','Island','Library','Bakery','Museum','Cinema','Aquarium','Train station','Space station','Igloo','Campsite','Windmill','Pyramid','Bridge','Carnival','Skate park','Swimming pool','Flower shop','Mountain cabin'],
+  Nature: ['Volcano','Waterfall','Mountain','Rainbow','Snowflake','Sunflower','Cactus','Palm tree','Mushroom','Seashell','Butterfly','Dragonfly','Bumblebee','Spider web','Leaf','Acorn','Pine cone','Cloud','Lightning bolt','Sun','Moon','Comet','Shooting star','Coral reef','Snowman'],
+  Fantasy: ['Dragon','Mermaid','Unicorn','Ghost','Fairy','Phoenix','Griffin','Sea monster','Friendly troll','Goblin','Genie','Pegasus','Giant','Leprechaun','Enchanted mirror','Magic carpet','Magic wand','Flying castle','Talking tree','Crystal ball'],
+  Occupations: ['Chef','Firefighter','Doctor','Nurse','Teacher','Farmer','Pilot','Police officer','Dentist','Scientist','Artist','Baker','Builder','Gardener','Veterinarian','Mechanic','Diver','Beekeeper','Musician','Mail carrier'],
+  'Funny situations': ['A cat wearing boots','A dinosaur baking a cake','An elephant on a bicycle','A chicken at the piano','A dog doing yoga','A penguin surfing','A bear eating spaghetti','A giraffe in a tiny car','A frog with a crown','A shark wearing sunglasses','A rabbit on roller skates','A turtle winning a race','An octopus knitting','A fox flying a kite','A lion at the hairdresser','A duck lifting weights','A mouse with a giant sandwich','A monkey taking a selfie','A zebra painting stripes','A whale blowing bubbles'],
+  'Imaginative combinations': ['A robot gardener','A flying teapot','A castle on a cloud','A rocket-shaped treehouse','A dragon in a spacesuit','A mermaid riding a seahorse','A unicorn delivering pizza','A pirate on the moon','A submarine with wings','A house inside a mushroom','A balloon-powered bicycle','An ice cream planet','A tree that grows doughnuts','A dinosaur school bus','A moon made of cheese','A flower with an umbrella','A tiny city in a bottle','A superhero snowman','A library under the sea','A rainbow bridge to a castle'],
+};
+export const drawingChallenges = [...new Set(Object.values(drawingCategories).flat())];
+export type SpeedRound = {
+  items: string[];
+  revealed: boolean[];
+  round: number;
+  remaining: string[];
+  selections: string[];
+};
+function shuffled(items: string[]) {
+  const result = [...items];
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
+}
+const signature = (items: string[]) => [...items].sort().join('\u0000');
+
+/** A persisted shuffle bag uses every challenge before refilling. */
+export function createSpeedRound(previous?: SpeedRound): SpeedRound {
+  let remaining = previous ? [...previous.remaining] : shuffled(drawingChallenges);
+  const previousWords = new Set(previous?.items || []);
+  const items: string[] = [];
+  while (items.length < 16) {
+    if (!remaining.length) remaining = shuffled(drawingChallenges);
+    // At a bag boundary, defer words from the immediately preceding round.
+    // Deferral preserves them in the bag instead of silently discarding them.
+    const index = remaining.findIndex(word => !previousWords.has(word) && !items.includes(word));
+    if (index === -1) {
+      const deferred = remaining;
+      remaining = [...shuffled(drawingChallenges.filter(word => !deferred.includes(word))), ...deferred];
+      continue;
+    }
+    items.push(remaining.splice(index, 1)[0]);
+  }
+  const selections = previous?.selections || [];
+  // Treat a selection as a set: merely shuffling the same 16 is never a new round.
+  while (selections.includes(signature(items))) {
+    const index = remaining.findIndex(word => !previousWords.has(word) && !items.includes(word));
+    if (index === -1) remaining.push(...shuffled(drawingChallenges.filter(word => !previousWords.has(word) && !items.includes(word))));
+    else {
+      const replacement = remaining.splice(index, 1)[0];
+      remaining.push(items.pop()!);
+      items.push(replacement);
+    }
+  }
+  return { items, revealed: Array(16).fill(false), round: (previous?.round || 0) + 1, remaining, selections: [...selections, signature(items)] };
+}
+export function toggleSpeedCard(state: SpeedRound, index: number): SpeedRound {
+  return { ...state, revealed: state.revealed.map((visible, i) => i === index ? !visible : visible) };
+}
