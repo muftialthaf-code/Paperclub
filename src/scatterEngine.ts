@@ -177,9 +177,12 @@ function selectCategories(difficulty:string,letter:string,count:number,history:s
 }
 export function letterPool(difficulty:string,count:number){const letters=difficulty==='Easy'?'ABCDEHLMPRST':difficulty==='Medium'?'ABCDEFGHJKLMNPRSTVW':'ACDEGHIJKLMNOPRSTVWYZ';return [...letters].filter(l=>selectCategories(difficulty,l,count).length===count)}
 export function createScatterRound(config:ScatterConfig,previous?:ScatterState):ScatterState{
- let letters=previous?.lettersLeft.length?[...previous.lettersLeft]:shuffle(letterPool(config.difficulty,config.count));
- if(letters.length>1&&letters[0]===previous?.letter)[letters[0],letters[1]]=[letters[1],letters[0]];
- const letter=letters.shift();if(!letter)throw Error('No playable letters for these settings');
+ const letters=previous?.lettersLeft.length?[...previous.lettersLeft]:letterPool(config.difficulty,config.count);
+ // Draw randomly from unused letters on every refresh, including older saved bags.
+ const candidates=letters.filter(letter=>letter!==previous?.letter);
+ const letter=candidates[Math.floor(Math.random()*candidates.length)];
+ if(!letter)throw Error('No playable letters for these settings');
+ letters.splice(letters.indexOf(letter),1);
  let categories:ScatterCategory[]=[];let signature='';for(let i=0;i<100;i++){categories=selectCategories(config.difficulty,letter,config.count,previous?.categoryHistory);signature=categories.map(c=>c.id).sort().join(',');if(!previous?.combinations.includes(signature))break}
  return {config,round:(previous?.round||0)+1,letter,categories:categories.map(c=>c.id),lettersLeft:letters,categoryHistory:[...(previous?.categoryHistory||[]),...categories.map(c=>c.id)],combinations:[...(previous?.combinations||[]),signature],phase:'play',milliseconds:config.duration*1000,deadline:null,points:categories.map(()=>config.players.map(()=>0)),base:previous?scatterScores(previous):config.players.map(()=>0),reviewed:categories.map(()=>false),cursor:0};
 }

@@ -23,3 +23,11 @@ test('classic and house-rule scoring is bounded, reversible and preserved across
 test('timer arithmetic handles pause, expiry and saved deadlines',()=>{
  let s=createScatterRound(scatterDefaults);s={...s,deadline:1000+120000};assert.equal(scatterTime(s,11000),110000);const paused={...s,milliseconds:scatterTime(s,11000),deadline:null};assert.equal(scatterTime(paused,999999),110000);assert.equal(scatterTime(s,150000),0);const ended=stopScatter(s,150000);assert.equal(ended.phase,'compare');assert.equal(ended.deadline,null);assert.equal(ended.milliseconds,0);assert.deepEqual(JSON.parse(JSON.stringify(ended)),ended);
 });
+
+test('letters are drawn randomly even from an alphabetically ordered saved bag',()=>{
+ const previous=createScatterRound(scatterDefaults);previous.letter='A';previous.lettersLeft=['B','C','D','E'];const random=Math.random;
+ try{Math.random=()=>.99;const next=createScatterRound(scatterDefaults,previous);assert.equal(next.letter,'E');assert.deepEqual(next.lettersLeft,['B','C','D'])}finally{Math.random=random}
+});
+test('refresh gives new content, a full paused timer and retains awarded points and names',()=>{
+ let previous=createScatterRound(scatterDefaults);previous=awardScatter(previous,0,1);previous={...previous,deadline:Date.now()+1000,milliseconds:1000,phase:'compare'};const next=createScatterRound(previous.config,previous);assert.notEqual(next.letter,previous.letter);assert.notDeepEqual([...next.categories].sort(),[...previous.categories].sort());assert.deepEqual(next.base,[1,0]);assert.equal(next.deadline,null);assert.equal(next.milliseconds,120000);assert.equal(next.phase,'play');assert.deepEqual(next.config.players,previous.config.players);
+});
