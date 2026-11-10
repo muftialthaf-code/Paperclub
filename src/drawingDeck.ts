@@ -1,3 +1,4 @@
+import {adultConcepts,adultRoles} from './adultGames';
 /** All content is bundled locally. No network or AI service is used. */
 export const drawingCategories: Record<string, string[]> = {
   Animals: ['Elephant','Giraffe','Camel','Flamingo','Octopus','Dinosaur','Penguin','Kangaroo','Crocodile','Turtle','Lion','Tiger','Zebra','Panda','Koala','Rabbit','Fox','Owl','Dolphin','Whale','Shark','Seahorse','Jellyfish','Peacock','Hedgehog'],
@@ -13,7 +14,14 @@ export const drawingCategories: Record<string, string[]> = {
   'Imaginative combinations': ['A robot gardener','A flying teapot','A castle on a cloud','A rocket-shaped treehouse','A dragon in a spacesuit','A mermaid riding a seahorse','A unicorn delivering pizza','A pirate on the moon','A submarine with wings','A house inside a mushroom','A balloon-powered bicycle','An ice cream planet','A tree that grows doughnuts','A dinosaur school bus','A moon made of cheese','A flower with an umbrella','A tiny city in a bottle','A superhero snowman','A library under the sea','A rainbow bridge to a castle'],
 };
 export const drawingChallenges = [...new Set(Object.values(drawingCategories).flat())];
+export const adultDrawingChallenges = [...adultConcepts, ...adultRoles.flatMap(role => ['negotiating with a dragon','chasing a deadline','pitching an invention','juggling conflicting priorities','solving a paradox','mediating a robot argument','repairing a time machine','conducting a silent orchestra','auctioning invisible art','balancing a chaotic budget','mapping a dream','escaping an endless meeting'].map(action => `${role} ${action}`))];
+export function drawingPool(difficulty:string):string[]{
+ if(difficulty==='Hard')return adultDrawingChallenges;
+ if(difficulty==='Easy')return Object.entries(drawingCategories).filter(([category])=>!['Funny situations','Imaginative combinations','Fantasy'].includes(category)).flatMap(([,words])=>words);
+ return drawingChallenges;
+}
 export type SpeedRound = {
+  difficulty?: string;
   items: string[];
   revealed: boolean[];
   round: number;
@@ -31,18 +39,19 @@ function shuffled(items: string[]) {
 const signature = (items: string[]) => [...items].sort().join('\u0000');
 
 /** A persisted shuffle bag uses every challenge before refilling. */
-export function createSpeedRound(previous?: SpeedRound): SpeedRound {
-  let remaining = previous ? [...previous.remaining] : shuffled(drawingChallenges);
+export function createSpeedRound(previous?: SpeedRound, difficulty = previous?.difficulty || 'Medium'): SpeedRound {
+  const pool=drawingPool(difficulty);
+  let remaining = previous && (previous.difficulty || 'Medium') === difficulty ? [...previous.remaining] : shuffled(pool);
   const previousWords = new Set(previous?.items || []);
   const items: string[] = [];
   while (items.length < 16) {
-    if (!remaining.length) remaining = shuffled(drawingChallenges);
+    if (!remaining.length) remaining = shuffled(pool);
     // At a bag boundary, defer words from the immediately preceding round.
     // Deferral preserves them in the bag instead of silently discarding them.
     const index = remaining.findIndex(word => !previousWords.has(word) && !items.includes(word));
     if (index === -1) {
       const deferred = remaining;
-      remaining = [...shuffled(drawingChallenges.filter(word => !deferred.includes(word))), ...deferred];
+      remaining = [...shuffled(pool.filter(word => !deferred.includes(word))), ...deferred];
       continue;
     }
     items.push(remaining.splice(index, 1)[0]);
@@ -51,14 +60,14 @@ export function createSpeedRound(previous?: SpeedRound): SpeedRound {
   // Treat a selection as a set: merely shuffling the same 16 is never a new round.
   while (selections.includes(signature(items))) {
     const index = remaining.findIndex(word => !previousWords.has(word) && !items.includes(word));
-    if (index === -1) remaining.push(...shuffled(drawingChallenges.filter(word => !previousWords.has(word) && !items.includes(word))));
+    if (index === -1) remaining.push(...shuffled(pool.filter(word => !previousWords.has(word) && !items.includes(word))));
     else {
       const replacement = remaining.splice(index, 1)[0];
       remaining.push(items.pop()!);
       items.push(replacement);
     }
   }
-  return { items, revealed: Array(16).fill(false), round: (previous?.round || 0) + 1, remaining, selections: [...selections, signature(items)] };
+  return { difficulty, items, revealed: Array(16).fill(false), round: (previous?.round || 0) + 1, remaining, selections: [...selections, signature(items)] };
 }
 export function toggleSpeedCard(state: SpeedRound, index: number): SpeedRound {
   return { ...state, revealed: state.revealed.map((visible, i) => i === index ? !visible : visible) };

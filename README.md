@@ -22,3 +22,11 @@ A parent-operated, screen-free family game platform. React 19, TypeScript, Vite 
 Session, names, preferences, favourites and recents persist only in localStorage on the current device. Nicknames work well. Clearing browser data clears saves. Service workers require HTTPS or localhost. Installation and offline operation need verification on target mobile browsers.
 
 QA: production build, generator tests and simulated-DOM journeys. Visual browser and real-device touch QA are unverified because the managed browser control tool was not offered in this session.
+
+## Difficulty audiences
+Easy and Medium are for children. Hard is for adults and does not use the child-age setting. Adult prompts remain family friendly.
+
+Speed Drawing keeps its sixteen cards and direct start; a compact selector changes the content pool. Secret Code Hard keeps A1–Z26 numbers with adult sentences. Drawing and deduction use complex scenes and abstract concepts; storytelling adds narrative constraints; quick thinking uses adult knowledge categories. Battleship uses 5×5 / 7×7 / 9×9 grids (adult fleet lengths 2, 3, 4, 5). Escape Room uses four child puzzles on Easy, five on Medium, and six validated adult puzzles on Hard.
+
+Older saved paper grids and escape adventures keep their original board/puzzles. Their Hard game screen offers a new adult game. Other saved Hard content updates, preserving names and scores; existing stories keep their written opening.
+`node tests/adult-games.mjs` exercises adult mode in all eight games, including the complete adult Battleship and Escape Room flows.

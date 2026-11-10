@@ -32,11 +32,6 @@ const shortPhrases = [
   'under the sea','behind the waterfall','follow the stars','open the chest','find the key',
   'save the castle','across the river','a secret message','the hidden passage','a curious fox',
 ];
-const youngSubjects = ['cat','dog','bear','duck','frog','fox','robot','dragon','pirate','rabbit'];
-const olderSubjects = ['astronaut','explorer','detective','wizard','inventor','dolphin','princess','librarian','unicorn','penguin'];
-const adjectives = ['friendly','brave','clever','curious','sleepy','tiny','happy','helpful','little','playful'];
-const destinations = ['castle','forest','garden','island','village','river','mountain','cave','tower','beach'];
-const treasures = ['golden key','hidden map','silver crown','magic book','glowing gem','lost compass','secret letter','tiny telescope','treasure chest','crystal star'];
 
 export function secretMessage(difficulty: string, age: number): string {
   if (difficulty === 'Easy') return choose(easyCodeWords).toUpperCase();
@@ -44,20 +39,18 @@ export function secretMessage(difficulty: string, age: number): string {
     const words = age < 8 ? familiarLongWords : [...familiarLongWords, ...advancedLongWords];
     return (Math.random() < 0.55 ? choose(words) : choose(shortPhrases)).toUpperCase();
   }
-  // Age adjusts familiarity, never the selected level or sentence length.
-  const subject = choose(age < 8 ? youngSubjects : [...youngSubjects, ...olderSubjects]);
-  const adjective = choose(adjectives);
-  const destination = choose(destinations);
-  const treasure = choose(treasures);
+  // Adult messages retain the simple number key; difficulty comes from language and length.
+  const subject=choose(['historian','architect','journalist','archivist','diplomat','cartographer','researcher','curator','engineer','botanist','analyst','composer','philosopher','astronomer','conservator']);
+  const action=choose(['discovered','examined','recovered','restored','documented','studied','protected','catalogued','reconstructed','authenticated']);
+  const object=choose(['ancient manuscript','missing blueprint','coded journal','historic artifact','secret treaty','rare painting','sealed letter','unfinished symphony','original sketch','forgotten archive']);
+  const description=choose(['mysterious','valuable','hidden','original','forgotten','remarkable','unusual','unexpected']);
   return choose([
-    `The ${adjective} ${subject} found the ${treasure}`,
-    `Follow the ${adjective} ${subject} to the ${destination}`,
-    `Look for the ${treasure} inside the ${destination}`,
-    `The ${subject} hid the ${treasure} near the ${destination}`,
-    `A ${adjective} ${subject} lives in the ${destination}`,
-    `Bring the ${treasure} to the ${adjective} ${subject}`,
-    `The ${adjective} ${subject} will help us find the ${treasure}`,
-    `Our next adventure begins at the ${destination}`,
+    `The ${subject} ${action} the ${description} ${object}`,
+    `The ${subject} questioned the ${description} story behind the ${object}`,
+    `Every ${description} detail in the ${object} deserves careful consideration`,
+    `A patient ${subject} ${action} what the ${description} records concealed`,
+    `The ${subject} kept the ${object} safe until morning`,
+    `Nobody expected the ${subject} to find the ${description} ${object}`,
   ]).toUpperCase();
 }
 

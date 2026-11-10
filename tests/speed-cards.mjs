@@ -15,7 +15,7 @@ const state=()=>JSON.parse(dom.window.localStorage.getItem('pc-session')).speed;
 const cards=()=>[...d.querySelectorAll('.mystery-card')];
 await boot();await click('Start playing');await click('Speed Drawing');
 assert(!d.querySelector('[role="dialog"]'));assert.equal(cards().length,16);
-assert(!d.querySelector('.play-header'));assert(!d.querySelector('input,select,canvas,.timer,.score-panel'));
+assert(!d.querySelector('.play-header'));assert(!d.querySelector('input,canvas,.timer,.score-panel'));
 assert.deepEqual(cards().map(b=>b.querySelector('.mystery-number').textContent),Array.from({length:16},(_,i)=>String(i+1)));
 assert(cards().every(b=>b.textContent.includes('Tap to reveal')&&b.getAttribute('aria-pressed')==='false'));
 assert(d.body.textContent.includes('Round 1'));assert(d.body.textContent.includes('0/16 revealed'));
