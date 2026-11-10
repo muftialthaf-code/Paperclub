@@ -30,3 +30,10 @@ Speed Drawing keeps its sixteen cards and direct start; a compact selector chang
 
 Older saved paper grids and escape adventures keep their original board/puzzles. Their Hard game screen offers a new adult game. Other saved Hard content updates, preserving names and scores; existing stories keep their written opening.
 `node tests/adult-games.mjs` exercises adult mode in all eight games, including the complete adult Battleship and Escape Room flows.
+
+## Scattergories
+`src/scatterEngine.ts` contains 102 categories across eight topic groups. Each category has local example witnesses used to admit only answerable letter/category pairs; these examples never appear in active play. Matching selects distinct answer families and caps each topic at two categories. Letter shuffle bags, category history, scores and paused/running timers persist with the session.
+
+`src/Scattergories.tsx` implements optional setup, individual/teams, 10/12 categories, 60/90/120/180-second timers, optional sound, classic/house scoring, per-category comparison, cumulative leaderboards and round/game endings. No written answers are collected or automatically judged.
+
+`node tests/scattergories.mjs` checks the complete setup/play/comparison/next-round flow, timer controls and expiry, sound, manual ending, both scoring modes, teams and persisted resume.
