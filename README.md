@@ -51,3 +51,7 @@ Club points: 3 for taking part plus 2 for a confirmed win, or 2 for cooperative 
 Profiles, scores and certificates stay in the current browser. Backup/restore is available; there is no cross-device account sync yet. Email sharing opens a parent-reviewed `mailto:` draft, and the host manually attaches the downloaded certificate. The app does not send emails automatically, store child email addresses, or publish certificates publicly. Automatic email delivery and shared family accounts require a later server-backed release.
 
 `node tests/clubhouse.mjs` checks profiles, guest play, party rosters, drawing votes, real game results, standings, certificates, profile merging and backup/restore. `node tests/club-results.mjs` checks replay identities, team assignments, party attribution and safe handling of storage failures.
+
+## Timer buzzer
+`src/timerSound.ts` synthesises a short buzzer locally with Web Audio. Every timed game uses it (Impossible Drawing, Secret Code, 5-Second Challenge, Doodle Detective, Paper Escape Room and Scattergories). `TimerSoundToggle` controls a shared, device-local sound preference, on by default. Audio is prepared during user gestures for mobile autoplay rules. Pauses, resets and manual finishes do not trigger it; deadline keys prevent repeated sounds. Unsupported audio never interrupts gameplay.
+`node tests/timer-buzzer.mjs` checks all six timed games, expiry, single playback, pause/reset/manual-end silence and shared mute persistence using a mocked audio context. Real-device audibility remains unverified.
