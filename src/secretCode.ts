@@ -88,8 +88,8 @@ export function encodeSecretMessage(answer: string, kind: CipherKind, shift = 3)
 }
 
 export function createSecretCode(difficulty: string, age: number): Challenge {
-  const kinds: CipherKind[] = difficulty === 'Easy' ? ['numbers'] : difficulty === 'Hard'
-    ? ['reverse','shift','symbols','twoStage'] : ['numbers','reverse','shift'];
+  const kinds: CipherKind[] = difficulty === 'Easy' || difficulty === 'Hard'
+    ? ['numbers'] : ['numbers','reverse','shift'];
   return encodeSecretMessage(secretMessage(difficulty, age), choose(kinds), choose([2,3,4,5]));
 }
 

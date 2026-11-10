@@ -42,3 +42,12 @@ test('fresh Hard sentences provide ample replay variety',()=>{
  const answers=new Set(Array.from({length:500},()=>createSecretCode('Hard',8).answer));
  assert(answers.size>300);
 });
+
+test('Hard uses only direct A1–Z26 numbers, with sentences retained',()=>{
+ for(const age of [5,8,14])for(let i=0;i<300;i++){
+  const c=createSecretCode('Hard',age);
+  assert.match(c.text,/^[0-9 ·/]+$/);assert.equal(c.hint,'A = 1, B = 2 … Z = 26');
+  const decoded=c.text.split(' / ').map(word=>word.split(' · ').map(n=>String.fromCharCode(+n+64)).join('')).join(' ');
+  assert.equal(decoded,c.answer);assert(c.answer!.split(' ').length>=5);
+ }
+});
