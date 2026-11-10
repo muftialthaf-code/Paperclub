@@ -6,9 +6,10 @@ type Props = {
   state?: SpeedRound;
   onChange: (state: SpeedRound) => void;
   onLeave: () => void;
+  onRecord?: () => void;
 };
 
-export default function SpeedDrawing({state, onChange, onLeave}: Props) {
+export default function SpeedDrawing({state, onChange, onLeave,onRecord}: Props) {
   const [initial] = useState(() => createSpeedRound());
   const game = state || initial;
   useEffect(() => { if (!state) onChange(initial); }, [state]);
@@ -38,6 +39,6 @@ export default function SpeedDrawing({state, onChange, onLeave}: Props) {
         : <><span className="mystery-number">{index + 1}</span><span className="mystery-instruction">Tap to reveal</span></>}
       </button>)}
     </div>
-    <div className="speed-reset"><button className="primary wide" onClick={reset}><RotateCcw size={18}/>Reset – New 16 Words</button></div>
+    <div className="speed-reset"><button className="primary wide" onClick={reset}><RotateCcw size={18}/>Reset – New 16 Words</button>{onRecord&&<button className="text-button speed-award-button" onClick={onRecord}>Save participation or a drawing award</button>}</div>
   </section>;
 }

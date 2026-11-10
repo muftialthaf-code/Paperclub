@@ -37,3 +37,17 @@ Older saved paper grids and escape adventures keep their original board/puzzles.
 `src/Scattergories.tsx` implements optional setup, individual/teams, 10/12 categories, 60/90/120/180-second timers, optional sound, classic/house scoring, per-category comparison, cumulative leaderboards and round/game endings. No written answers are collected or automatically judged.
 
 `node tests/scattergories.mjs` checks the complete setup/play/comparison/next-round flow, timer controls and expiry, sound, manual ending, both scoring modes, teams and persisted resume.
+
+## Family clubhouse (first release)
+The Clubhouse navigation opens parent-managed family and guest profiles, parties, confirmed results, per-game personal records, separate child/adult and guest leaderboards, monthly standings, parent awards and downloadable SVG certificates. No login or backend is required.
+
+- `src/clubModel.ts`: versioned profile/result/party/award data, validated backups, safe profile merge/removal, club-point calculations and escaped certificate generation.
+- `src/ClubContext.tsx`: device-local storage (`pc-clubhouse`), save-failure handling and optional saved-player selection in game setup.
+- `src/Clubhouse.tsx`: roster management, party planning, standings, trophy cabinet, certificate preview, backups and parent email drafts.
+- `src/ResultRecorder.tsx` and `src/resultBridge.ts`: explicit result confirmation for every game, identity mapping, team membership and unscored drawing participation. Results are deduplicated by game-session identity; a replay receives a fresh identity.
+
+Club points: 3 for taking part plus 2 for a confirmed win, or 2 for cooperative completion. Awards add no points. Actual scores remain separate by game and difficulty. Team scores are not treated as individual personal bests. Month boundaries use Asia/Riyadh. Saved paper games are never silently imported as confirmed results.
+
+Profiles, scores and certificates stay in the current browser. Backup/restore is available; there is no cross-device account sync yet. Email sharing opens a parent-reviewed `mailto:` draft, and the host manually attaches the downloaded certificate. The app does not send emails automatically, store child email addresses, or publish certificates publicly. Automatic email delivery and shared family accounts require a later server-backed release.
+
+`node tests/clubhouse.mjs` checks profiles, guest play, party rosters, drawing votes, real game results, standings, certificates, profile merging and backup/restore. `node tests/club-results.mjs` checks replay identities, team assignments, party attribution and safe handling of storage failures.
