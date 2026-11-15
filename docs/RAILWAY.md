@@ -37,7 +37,7 @@ railway up --project ef5237e9-2cec-4d35-b20b-9c4770499d92 --environment 428cfd91
 
 For automatic GitHub deploys, push this branch to a private repository you own and connect that repository to the existing web service. Do not create a duplicate database or paste credentials into the repository.
 
-## Activate sign-in providers
+## Activate sign-in providers (Gmail selected)
 
 Enter secrets directly in the Railway web service's Variables tab. Do not send them in chat or commit an `.env` file. Set each provider's complete set together and deploy.
 
@@ -49,11 +49,17 @@ Enter secrets directly in the Railway web service's Variables tab. Do not send t
 
 While Google is in testing mode, add the parents who will test to the consent screen's test users. Reconfigure both Google and APP_ORIGIN if you later add a custom domain.
 
-**Email/password**: Use a verified sender with either Resend or an SMTP provider:
+**Email/password via Gmail SMTP**: Enable Google 2-Step Verification, then create an App Password named Paperclub at https://myaccount.google.com/apppasswords. Set these Railway variables together:
 
-- `EMAIL_FROM`: your verified sender, such as `Paperclub <parents@your-domain.com>`
-- Resend: `RESEND_API_KEY`
-- Or SMTP: `SMTP_HOST`, `SMTP_PORT` (587 STARTTLS or 465 TLS), `SMTP_USER`, `SMTP_PASSWORD`
+| Variable | Value |
+| --- | --- |
+| `SMTP_HOST` | `smtp.gmail.com` |
+| `SMTP_PORT` | `465` |
+| `SMTP_USER` | Your Gmail address |
+| `SMTP_PASSWORD` | The Google App Password without spaces |
+| `EMAIL_FROM` | `Paperclub <youraddress@gmail.com>` |
+
+Do not use your normal Google password. Gmail has provider sending limits and account-dependent App Password availability. No separate paid email sender is required for this setup. Google OAuth sign-in and Gmail SMTP are separate configurations.
 
 Email/password remains disabled until a complete mail transport is configured. Google remains disabled until both Google credentials exist. The UI never offers a provider that is not configured. Credentials alone do not prove delivery: test signup, verify the message reaches an inbox, follow verification, sign in, reset the password, and sign out. No external emails are sent by the automated tests. Certificate email remains a user-controlled draft, separate from authentication mail.
 
@@ -84,7 +90,7 @@ For local startup, use `.env.example` as a variable checklist and inject environ
 
 ## First-time provider setup, step by step
 
-You can prepare providers while GitHub is being connected. Google sign-in can work before email delivery is ready. Use the exact app origin above for the first deployment.
+You can prepare providers before deployment. Google sign-in can work before email delivery is ready. Use the exact app origin above for the first deployment.
 
 ### Google
 
@@ -97,19 +103,10 @@ You can prepare providers while GitHub is being connected. Google sign-in can wo
 7. Save the client. In Railway → Paperclub → paperclub-web → Variables, add `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` together using the two values Google provides. Do not put them in GitHub or chat.
 8. After code is deployed, use Continue with Google and your listed test user. For a public launch, complete Google's production audience/publishing requirements and provide your actual product privacy information.
 
-### Verification and password-reset email with Resend
+### Verification and password-reset email with Gmail
 
-1. Create an account at https://resend.com/.
-2. Open Domains → Add domain. Use a domain you own, or a dedicated subdomain such as `mail.yourdomain.com`.
-3. Copy the exact DNS records Resend provides into the DNS provider for that domain. Wait until Resend reports verification succeeded. The records depend on your domain; do not copy example DNS values.
-4. Open API Keys → Create API key. Prefer **Sending access** restricted to your verified domain.
-5. In the same Railway web service's Variables, add these together:
-   - `EMAIL_FROM`: `Paperclub <accounts@your-verified-domain>` (use your real verified sender domain).
-   - `RESEND_API_KEY`: the API key from Resend.
-6. Apply the variables and deploy/redeploy the web service. Create a parent account, receive and follow the verification email, then test Forgot your password and sign-out.
-
-For a full public email/password launch, a verified sending domain is needed. Resend's onboarding sender is suitable only for limited testing under Resend's recipient restrictions. If you do not own a domain yet, Google can be enabled first while you choose one. We never substitute a test sender for working public email delivery.
+Use the Gmail SMTP values in the provider section above. Enter the App Password only in Railway. After deployment, create a parent account and follow its email verification link; also test password reset and sign-out. A successful SMTP configuration check does not prove inbox delivery, so complete this with your real inbox before inviting other families.
 
 ### What to share back
 
-Tell the assistant **Google variables added** and/or **Resend variables added**. If something fails, share the error message, not the client secret, API key, password, verification URL or reset token. Once GitHub is connected and the code is published, the assistant can deploy the existing service and verify its public health and enabled-provider flags. Real inbox delivery and real Google consent still need a parent to complete the browser flows.
+Tell the assistant **Google variables added** and/or **Gmail variables added**. If something fails, share the error message, not the client secret, API key, password, verification URL or reset token. Once GitHub is connected and the code is published, the assistant can deploy the existing service and verify its public health and enabled-provider flags. Real inbox delivery and real Google consent still need a parent to complete the browser flows.

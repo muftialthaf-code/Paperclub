@@ -1,7 +1,10 @@
 # Paperclub
 A parent-operated, screen-free family game platform. React 19, TypeScript, Vite and Tailwind. Public games plus optional parent login and private, server-backed family accounts. No child logins or external AI.
 
-## Run
+## Railway deployment
+This deployment uses Node 24, PostgreSQL, verified email/password with Gmail SMTP, and Google parent sign-in. Public games remain available without login. Run `npm run build:railway` to build, `npm run db:migrate:railway` before starting, then `npm start`. Required variables and provider setup are in [docs/RAILWAY.md](docs/RAILWAY.md). The original Sites deployment remains separate.
+
+## Original Sites build and game checks
 `npm install`, then `npm run dev`.
 `npm run build` creates the existing frontend plus the deployable Worker in `dist/server/`.
 `npm test` validates generation and puzzle answers. `npm run test:accounts` and `npx tsx tests/accounts.ts` validate the parent-account API and UI against a migrated database.
