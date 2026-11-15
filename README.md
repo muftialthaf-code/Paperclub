@@ -55,3 +55,15 @@ Profiles, scores and certificates stay in the current browser. Backup/restore is
 ## Timer buzzer
 `src/timerSound.ts` synthesises a short buzzer locally with Web Audio. Every timed game uses it (Impossible Drawing, Secret Code, 5-Second Challenge, Doodle Detective, Paper Escape Room and Scattergories). `TimerSoundToggle` controls a shared, device-local sound preference, on by default. Audio is prepared during user gestures for mobile autoplay rules. Pauses, resets and manual finishes do not trigger it; deadline keys prevent repeated sounds. Unsupported audio never interrupts gameplay.
 `node tests/timer-buzzer.mjs` checks all six timed games, expiry, single playback, pause/reset/manual-end silence and shared mute persistence using a mocked audio context. Real-device audibility remains unverified.
+
+## Four additional paper games
+Word Ladder, Anagram Race, Invent Something and Would You Rather? extend the existing registry, setup, session persistence, score controls, timers, buzzer, result confirmation and Clubhouse rather than introducing a new game shell or visual theme.
+
+- `src/wordGames.ts`: reviewed 3/4/5-letter word banks with breadth-first validated ladder paths. Easy paths use 2–3 changes, Medium 3–4, Hard 4–5. A minimum is claimed only when the suggested path meets the Hamming-distance lower bound; other puzzles show the suggested route length. Anagram pools respect 4–5 / 5–7 / 7–10 letter bands, exclude known common ambiguous sets, include category clues and use an unchanged-word-safe shuffle.
+- `src/creativeGames.ts`: 40 original invention problems and 40 dilemmas per level, spanning everyday, nature, fantasy, engineering and decision-making topics.
+- `src/newGames.ts`: stable challenge keys and cycle-based selection prevent repetitions until a pool is exhausted. Ladder directions may reverse, but the pair is counted only once.
+- `src/ExtraGamePrompt.tsx`: existing-theme word panels, balanced dilemma cards, optional presentation guidance and favourite-question viewing. Favourite questions persist separately from favourite games.
+
+Anagram Next Word preserves the round deadline. Expiry ends the race without revealing answers; New Round resets the timer and word counter, preserves scores and draws fresh content. Invent Something also supports explicit presentation/voting stages. Neither game collects drawings or written answers. Word Ladder and Would You Rather? are untimed.
+
+`npm test` validates every ladder and the content pools. `node tests/four-games.mjs` exercises all four games at every level, answer privacy, round/timer behaviour, score persistence, favourite questions, speaker selection and interrupted-session resume. The existing-game, Clubhouse, buzzer and offline checks continue to apply. Visual/mobile-browser QA is unverified when managed browser controls are unavailable.
