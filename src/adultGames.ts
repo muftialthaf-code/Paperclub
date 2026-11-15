@@ -1,3 +1,5 @@
+import {isArabic} from './i18n/locale';
+import {arabicStoryTurn} from './arabic/paper';
 import type {Challenge, Settings, Puzzle} from './engine';
 const choose = <T,>(items: readonly T[]) => items[Math.floor(Math.random()*items.length)];
 export const adultConcepts = [
@@ -48,7 +50,7 @@ export const adultTwists = ['The apparent antagonist offers a solution, but asks
 export function adultStory(s:Settings):Challenge {
  return {text:`${choose(adultStoryStarts[s.theme]||adultStoryStarts.Adventure)}. ${choose(['The decision cannot wait until morning','Nobody can agree on who should take responsibility','The obvious solution would break an important promise','The only person who can help has a conflicting motive'])}.`,instruction:`Adults: build a coherent story one sentence at a time. ${choose(adultStoryConstraints)}. Keep the story family friendly.`};
 }
-export function storyTurn(s:Settings, completedTurns:number):Challenge {
+export function storyTurn(s:Settings, completedTurns:number):Challenge {if(isArabic())return arabicStoryTurn(s,completedTurns);
  const name=s.players[completedTurns%s.players.length];
  const twist=completedTurns%s.players.length===0;
  const last=completedTurns>=s.players.length*3-1;

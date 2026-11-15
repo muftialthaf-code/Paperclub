@@ -13,5 +13,5 @@ vm.runInNewContext(fs.readFileSync('public/sw.js','utf8'),context);
 let installed;listeners.install({waitUntil:p=>installed=p});await installed;online=false;
 async function request(path,mode){let response;listeners.fetch({request:{method:'GET',url:absolute(path),mode},respondWith:p=>response=p});const r=await response;assert.equal(r.status,200);return r}
 const html=await(await request('/','navigate')).text();const assets=[...html.matchAll(/(?:src|href)="(\/assets\/[^\"]+)"/g)].map(m=>m[1]);assert(assets.some(p=>p.endsWith('.js')));assert(assets.some(p=>p.endsWith('.css')));
-for(const path of [...assets,'/manifest.webmanifest','/icon.svg'])assert((await(await request(path)).arrayBuffer()).byteLength>0);
-console.log('PASS: first-load cache serves app HTML, JavaScript, CSS, manifest and icon with network disabled');
+for(const path of [...assets,'/manifest.webmanifest','/icon.svg','/fonts/Tajawal-Regular.ttf','/fonts/Tajawal-Medium.ttf','/fonts/Tajawal-Bold.ttf'])assert((await(await request(path)).arrayBuffer()).byteLength>0);
+console.log('PASS: first-load cache serves app HTML, JavaScript, CSS, manifest, icon and Arabic fonts with network disabled');

@@ -1,3 +1,5 @@
+import {isArabic} from './i18n/locale';
+import {arabicSpoken} from './arabic/spoken';
 import{chooseContent}from'./newGames';import{dilemmaPools}from'./creativeGames';import{drawingCategories}from'./drawingDeck';import{adultConcepts}from'./adultGames';import{scatterCategories}from'./scatterEngine';
 export type SpokenPrompt={key:string,text:string,answer?:string,a?:string,b?:string,words?:string[],required?:number};
 const shuffled=<T,>(items:T[])=>{const values=[...items];for(let i=values.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[values[i],values[j]]=[values[j],values[i]]}return values};
@@ -48,6 +50,7 @@ function combinations(game:string,level:string,count:number,history:string[]):Sp
  return {key,text:'Tell a story using every word.',words};
 }
 export function spokenPrompt(game:string,level:string,history:string[],hardWords=5):SpokenPrompt{
+ if(isArabic())return arabicSpoken(game,level,history,hardWords);
  const difficulty=['Easy','Medium','Hard'].includes(level)?level:'Medium';
  if(game==='np-story60')return combinations(game,difficulty,difficulty==='Hard'?hardWords:3,history);
  if(game==='np-side'){const c=chooseContent(dilemmaPools[difficulty],history);return {key:c.key,text:'Which side will you defend?',a:c.a,b:c.b}}

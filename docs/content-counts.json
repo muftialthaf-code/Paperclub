@@ -1,0 +1,323 @@
+{
+  "notes": [
+    "Counts are per difficulty, not claims of 100 hand-written prompts per level.",
+    "Word-ladder totals count endpoint pairs with verified curated-dictionary paths, not separately authored puzzles.",
+    "Compositional prompts are counted as combinations and distinguished from authored banks.",
+    "Arabic word-ladder dictionary: 277 entries.",
+    "Arabic anagrams use prevalidated tile variants; alternate valid answers remain host judged."
+  ],
+  "games": [
+    {
+      "id": "ladder",
+      "english": {
+        "Easy": 6570,
+        "Medium": 4768,
+        "Hard": 981
+      },
+      "arabic": {
+        "Easy": 3863,
+        "Medium": 6605,
+        "Hard": 11498
+      }
+    },
+    {
+      "id": "anagram",
+      "english": {
+        "Easy": 65,
+        "Medium": 96,
+        "Hard": 110
+      },
+      "arabic": {
+        "Easy": 69,
+        "Medium": 70,
+        "Hard": 66
+      }
+    },
+    {
+      "id": "invent",
+      "english": {
+        "Easy": 40,
+        "Medium": 40,
+        "Hard": 40
+      },
+      "arabic": {
+        "Easy": 120,
+        "Medium": 120,
+        "Hard": 120
+      }
+    },
+    {
+      "id": "rather",
+      "english": {
+        "Easy": 40,
+        "Medium": 40,
+        "Hard": 40
+      },
+      "arabic": {
+        "Easy": 36,
+        "Medium": 36,
+        "Hard": 36
+      }
+    },
+    {
+      "id": "scatter",
+      "english": {
+        "Easy": "12 eligible letters at 12 categories / 39 categories",
+        "Medium": "18 eligible letters at 12 categories / 75 categories",
+        "Hard": "19 eligible letters at 12 categories / 63 categories"
+      },
+      "arabic": {
+        "Easy": "9 eligible letters at 12 categories / 20 categories",
+        "Medium": "21 eligible letters at 12 categories / 23 categories",
+        "Hard": "27 eligible letters at 12 categories / 28 categories"
+      }
+    },
+    {
+      "id": "speed",
+      "english": {
+        "Easy": 190,
+        "Medium": 250,
+        "Hard": 204
+      },
+      "arabic": {
+        "Easy": 210,
+        "Medium": 320,
+        "Hard": 300
+      }
+    },
+    {
+      "id": "impossible",
+      "english": {
+        "Easy": "30 animals × 8 actions",
+        "Medium": "30 animals × 20 actions",
+        "Hard": "12 roles × 12 actions × 10 places × 8 constraints"
+      },
+      "arabic": {
+        "Easy": 240,
+        "Medium": 800,
+        "Hard": 800
+      }
+    },
+    {
+      "id": "code",
+      "english": {
+        "Easy": 119,
+        "Medium": "48+27 long words (age filtered), 34 short phrases",
+        "Hard": "15,830 compositional sentences across 6 sentence patterns"
+      },
+      "arabic": {
+        "Easy": 101,
+        "Medium": 117,
+        "Hard": 108
+      }
+    },
+    {
+      "id": "five",
+      "english": {
+        "Easy": 8,
+        "Medium": 69,
+        "Hard": 32
+      },
+      "arabic": {
+        "Easy": 72,
+        "Medium": 72,
+        "Hard": 72
+      }
+    },
+    {
+      "id": "detective",
+      "english": {
+        "Easy": 60,
+        "Medium": 75,
+        "Hard": 60
+      },
+      "arabic": {
+        "Easy": 120,
+        "Medium": 90,
+        "Hard": 40
+      }
+    },
+    {
+      "id": "story",
+      "english": {
+        "Easy": "3 openings/theme × 6 discoveries × 10 locations",
+        "Medium": "3 openings/theme × 6 discoveries × 10 locations",
+        "Hard": "3 openings/theme × 4 complications × 8 writing constraints"
+      },
+      "arabic": {
+        "Easy": "120 openings per theme; 4 themes",
+        "Medium": "120 openings per theme; 4 themes",
+        "Hard": "120 openings per theme; 4 themes"
+      }
+    },
+    {
+      "id": "battle",
+      "english": {
+        "Easy": "5×5 paper board; no prompt bank",
+        "Medium": "7×7 paper board; no prompt bank",
+        "Hard": "9×9 paper board; no prompt bank"
+      },
+      "arabic": {
+        "Easy": "5×5 shared paper board; no prompt bank",
+        "Medium": "7×7 shared paper board; no prompt bank",
+        "Hard": "9×9 shared paper board; no prompt bank"
+      }
+    },
+    {
+      "id": "escape",
+      "english": {
+        "Easy": "4 sequential procedural locks; existing parameterised library",
+        "Medium": "5 sequential procedural locks; existing parameterised library",
+        "Hard": "6 sequential procedural locks; existing parameterised library"
+      },
+      "arabic": {
+        "Easy": "4 independently validated procedural locks (500 adventures checked per level)",
+        "Medium": "5 independently validated procedural locks (500 adventures checked per level)",
+        "Hard": "6 independently validated procedural locks (500 adventures checked per level)"
+      }
+    },
+    {
+      "id": "np-topics",
+      "english": {
+        "Easy": 32,
+        "Medium": 32,
+        "Hard": 32
+      },
+      "arabic": {
+        "Easy": 36,
+        "Medium": 36,
+        "Hard": 36
+      }
+    },
+    {
+      "id": "np-story60",
+      "english": {
+        "Easy": "3 words from 5 curated groups (single-word entries only)",
+        "Medium": "3 words from 5 curated groups (single-word entries only)",
+        "Hard": "4 or 5 words from 6 curated groups (single-word entries only)"
+      },
+      "arabic": {
+        "Easy": "3 words from 120 original Arabic entries across 3 groups",
+        "Medium": "3 words from 90 original Arabic entries across 3 groups",
+        "Hard": "4 or 5 words from 170 original Arabic entries across 5 groups"
+      }
+    },
+    {
+      "id": "np-convince",
+      "english": {
+        "Easy": 32,
+        "Medium": 32,
+        "Hard": 32
+      },
+      "arabic": {
+        "Easy": 36,
+        "Medium": 36,
+        "Hard": 36
+      }
+    },
+    {
+      "id": "np-side",
+      "english": {
+        "Easy": 40,
+        "Medium": 40,
+        "Hard": 40
+      },
+      "arabic": {
+        "Easy": 36,
+        "Medium": 36,
+        "Hard": 36
+      }
+    },
+    {
+      "id": "np-countdown",
+      "english": {
+        "Easy": 39,
+        "Medium": 75,
+        "Hard": 27
+      },
+      "arabic": {
+        "Easy": 72,
+        "Medium": 72,
+        "Hard": 72
+      }
+    },
+    {
+      "id": "np-association",
+      "english": {
+        "Easy": 50,
+        "Medium": 65,
+        "Hard": 60
+      },
+      "arabic": {
+        "Easy": 120,
+        "Medium": 90,
+        "Hard": 40
+      }
+    },
+    {
+      "id": "np-truths",
+      "english": {
+        "Easy": 32,
+        "Medium": 32,
+        "Hard": 32
+      },
+      "arabic": {
+        "Easy": 36,
+        "Medium": 36,
+        "Hard": 36
+      }
+    },
+    {
+      "id": "np-scenario",
+      "english": {
+        "Easy": 32,
+        "Medium": 32,
+        "Hard": 32
+      },
+      "arabic": {
+        "Easy": 36,
+        "Medium": 36,
+        "Hard": 36
+      }
+    },
+    {
+      "id": "np-yesno",
+      "english": {
+        "Easy": 32,
+        "Medium": 32,
+        "Hard": 32
+      },
+      "arabic": {
+        "Easy": 72,
+        "Medium": 72,
+        "Hard": 72
+      }
+    },
+    {
+      "id": "np-rapid",
+      "english": {
+        "Easy": 39,
+        "Medium": 75,
+        "Hard": 27
+      },
+      "arabic": {
+        "Easy": 180,
+        "Medium": 180,
+        "Hard": 180
+      }
+    },
+    {
+      "id": "np-opposite",
+      "english": {
+        "Easy": 32,
+        "Medium": 32,
+        "Hard": 32
+      },
+      "arabic": {
+        "Easy": 72,
+        "Medium": 72,
+        "Hard": 72
+      }
+    }
+  ]
+}

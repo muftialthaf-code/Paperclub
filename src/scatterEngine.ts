@@ -1,3 +1,5 @@
+import {isArabic} from './i18n/locale';
+import {arabicScatterCategories,arabicEligible,arabicLetters,arabicSelect} from './arabic/scatter';
 export type ScatterCategory={id:string,group:string,level:number,family:string,title:string,examples:string[]};
 export const scatterCategories:ScatterCategory[]=[];
 function add(group:string,level:number,rows:string){for(const row of rows.trim().split('\n')){const[family,title,words]=row.split('|');scatterCategories.push({id:`sc-${scatterCategories.length}`,group,level,family,title,examples:words.split(',').map(s=>s.trim())})}}
@@ -155,8 +157,9 @@ export type ScatterConfig={players:string[],teams:boolean,difficulty:string,coun
 export const scatterDefaults:ScatterConfig={players:['Player 1','Player 2'],teams:false,difficulty:'Easy',count:10,duration:120,houseRule:false,sound:false};
 export type ScatterState={config:ScatterConfig,round:number,letter:string,categories:string[],lettersLeft:string[],categoryHistory:string[],combinations:string[],phase:'play'|'compare'|'finished',milliseconds:number,deadline:number|null,points:number[][],base:number[],reviewed:boolean[],cursor:number};
 const shuffle=<T,>(a:T[])=>{const r=[...a];for(let i=r.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]]}return r};
-export function eligibleCategories(difficulty:string,letter:string){return scatterCategories.filter(c=>(difficulty==='Easy'?c.level===0:difficulty==='Hard'?c.level>=1:c.level<=1)&&c.examples.some(w=>w[0].toUpperCase()===letter))}
+export function eligibleCategories(difficulty:string,letter:string){if(isArabic())return arabicEligible(difficulty,letter);return scatterCategories.filter(c=>!c.id.startsWith('ar-')&&(difficulty==='Easy'?c.level===0:difficulty==='Hard'?c.level>=1:c.level<=1)&&c.examples.some(w=>w[0].toUpperCase()===letter))}
 function selectCategories(difficulty:string,letter:string,count:number,history:string[]=[]){
+ if(isArabic())return arabicSelect(difficulty,letter,count,history);
  const available=shuffle(eligibleCategories(difficulty,letter));available.sort((a,b)=>(difficulty==='Hard'?b.level-a.level:0)||Number(history.includes(a.id))-Number(history.includes(b.id))||(difficulty==='Medium'?b.level-a.level:0));
  // Bipartite matching: each answer family once, each topic group at most twice.
  // Augmenting paths avoid a greedy choice blocking another valid category.
@@ -175,7 +178,7 @@ function selectCategories(difficulty:string,letter:string,count:number,history:s
  const selected=[...matched.values()];
  return selected;
 }
-export function letterPool(difficulty:string,count:number){const letters=difficulty==='Easy'?'ABCDEHLMPRST':difficulty==='Medium'?'ABCDEFGHJKLMNPRSTVW':'ACDEGHIJKLMNOPRSTVWYZ';return [...letters].filter(l=>selectCategories(difficulty,l,count).length===count)}
+export function letterPool(difficulty:string,count:number){if(isArabic())return arabicLetters(difficulty,count);const letters=difficulty==='Easy'?'ABCDEHLMPRST':difficulty==='Medium'?'ABCDEFGHJKLMNPRSTVW':'ACDEGHIJKLMNOPRSTVWYZ';return [...letters].filter(l=>selectCategories(difficulty,l,count).length===count)}
 export function createScatterRound(config:ScatterConfig,previous?:ScatterState):ScatterState{
  const letters=previous?.lettersLeft.length?[...previous.lettersLeft]:letterPool(config.difficulty,config.count);
  // Draw randomly from unused letters on every refresh, including older saved bags.
@@ -190,3 +193,5 @@ export const scatterScores=(s:ScatterState)=>s.base.map((b,p)=>b+s.points.reduce
 export function awardScatter(s:ScatterState,player:number,delta:number):ScatterState{return {...s,points:s.points.map((row,c)=>c===s.cursor?row.map((n,p)=>p===player?Math.max(0,Math.min(s.config.houseRule?2:1,n+delta)):n):row)}}
 export function stopScatter(s:ScatterState,now=Date.now()):ScatterState{return {...s,phase:'compare',milliseconds:s.deadline?Math.max(0,s.deadline-now):s.milliseconds,deadline:null}}
 export function scatterTime(s:ScatterState,now=Date.now()){return s.deadline?Math.max(0,s.deadline-now):s.milliseconds}
+
+export const scatterCategoryById=(id:string)=>[...scatterCategories,...arabicScatterCategories].find(c=>c.id===id)!;

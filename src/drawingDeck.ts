@@ -1,3 +1,5 @@
+import {isArabic} from './i18n/locale';
+import {arabicDrawingPool} from './arabic/common';
 import {adultConcepts,adultRoles} from './adultGames';
 /** All content is bundled locally. No network or AI service is used. */
 export const drawingCategories: Record<string, string[]> = {
@@ -40,7 +42,7 @@ const signature = (items: string[]) => [...items].sort().join('\u0000');
 
 /** A persisted shuffle bag uses every challenge before refilling. */
 export function createSpeedRound(previous?: SpeedRound, difficulty = previous?.difficulty || 'Medium'): SpeedRound {
-  const pool=drawingPool(difficulty);
+  const pool=isArabic()?arabicDrawingPool(difficulty):drawingPool(difficulty);
   let remaining = previous && (previous.difficulty || 'Medium') === difficulty ? [...previous.remaining] : shuffled(pool);
   const previousWords = new Set(previous?.items || []);
   const items: string[] = [];
