@@ -1,8 +1,8 @@
 import{emptyClub,validateClub}from'../src/shared/clubData';
 export interface Statement{bind(...values:unknown[]):Statement;first<T=Record<string,unknown>>():Promise<T|null>;all<T=Record<string,unknown>>():Promise<{results:T[]}>;run():Promise<{meta:{changes:number}}>}
 export interface Database{prepare(sql:string):Statement;batch(statements:Statement[]):Promise<{meta:{changes:number}}[]>}
-export type Env={DB?:Database};
-type Identity={id:string,email:string|null,displayName:string};
+export type Env={DB?:Database,authenticate?:(request:Request)=>Promise<Identity|null>,provider?:string};
+export type Identity={id:string,email:string|null,displayName:string};
 class HttpError extends Error{constructor(public status:number,public code:string){super(code)}}
 const fail=(status:number,code:string):never=>{throw new HttpError(status,code)};
 const response=(body:unknown,status=200)=>new Response(JSON.stringify(body),{status,headers:{'Content-Type':'application/json; charset=utf-8','Cache-Control':'private, no-store, max-age=0','Vary':'Cookie','X-Content-Type-Options':'nosniff'}});
@@ -20,9 +20,9 @@ const integer=(value:unknown)=>typeof value==='number'&&Number.isSafeInteger(val
 export async function api(request:Request,env:Env):Promise<Response>{try{
  const url=new URL(request.url),path=url.pathname;
  if(request.method==='OPTIONS')return response({error:'method_not_allowed'},405);
- if(path==='/api/status'&&request.method==='GET'){if(!env.DB)return response({accounts:'unavailable'},503);const tables=await env.DB.prepare("SELECT name FROM sqlite_master WHERE type = 'table' AND name IN ('parent_accounts', 'families', 'family_memberships', 'family_clubhouses')").all();return response({accounts:tables.results.length===4?'ready':'unavailable',provider:'chatgpt'},tables.results.length===4?200:503)}
- const user=identity(request);
- if(path==='/api/account'&&request.method==='GET'&&!user)return response({user:null,account:null,families:[],provider:'chatgpt'});
+ if(path==='/api/status'&&request.method==='GET'){if(!env.DB)return response({accounts:'unavailable'},503);const tables=await env.DB.prepare("SELECT name FROM sqlite_master WHERE type = 'table' AND name IN ('parent_accounts', 'families', 'family_memberships', 'family_clubhouses')").all();return response({accounts:tables.results.length===4?'ready':'unavailable',provider:env.provider||'email-google'},tables.results.length===4?200:503)}
+ const user=env.authenticate?await env.authenticate(request):null;
+ if(path==='/api/account'&&request.method==='GET'&&!user)return response({user:null,account:null,families:[],provider:env.provider||'email-google'});
  if(!user)return fail(401,'sign_in_required');
  if(!['GET','HEAD'].includes(request.method)){
   if(request.headers.get('origin')!==url.origin||request.headers.get('sec-fetch-site')==='cross-site')return fail(403,'origin_rejected');
@@ -31,7 +31,7 @@ export async function api(request:Request,env:Env):Promise<Response>{try{
  if(path==='/api/account'&&request.method==='GET'){
   const account=await db.prepare('SELECT display_name AS displayName, created_at AS createdAt FROM parent_accounts WHERE id = ?').bind(user.id).first();
   const families=await db.prepare('SELECT f.id, f.name, f.created_at AS createdAt, m.role FROM families f JOIN family_memberships m ON m.family_id = f.id WHERE m.user_id = ? ORDER BY f.created_at, f.id').bind(user.id).all();
-  return response({user,account,families:families.results,provider:'chatgpt'});
+  return response({user,account,families:families.results,provider:env.provider||'email-google'});
  }
  if(path==='/api/account'&&request.method==='PATCH'){
   const p=await payload(request),displayName=name(p.displayName),now=new Date().toISOString();
