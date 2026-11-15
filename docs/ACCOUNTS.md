@@ -23,7 +23,7 @@ The client waits for server confirmation before updating family records or sayin
 
 Private family data is held in memory, never in localStorage. Account-linked game settings and unfinished rounds also stay in memory so private player names do not leak into the old device saves. Confirmed results and profiles persist on the server; unfinished private rounds do not resume after a full browser refresh. Public/device-mode rounds retain the existing local save behaviour. Existing local copies remain until the parent chooses to remove them; login does not retroactively make a pre-existing device backup private.
 
-API and account responses use `Cache-Control: private, no-store`; the service worker excludes all API and authentication paths and retires older Paperclub caches. Sign-out is handled by Sites and navigates away, clearing in-memory family data. The public `/api/status` endpoint reports database/schema availability only, without names, email addresses, records or counts of families.
+Before requesting parent data, the client checks an offline-worker privacy handshake and upgrades any legacy worker; if that fails it blocks account requests instead of allowing the old cache to store them. API and account responses use `Cache-Control: private, no-store`; the service worker excludes all API and authentication paths and retires older Paperclub caches. Sign-out is handled by Sites and navigates away, clearing in-memory family data. The public `/api/status` endpoint reports database/schema availability only, without names, email addresses, records or counts of families.
 
 ## Hosting and migrations
 
@@ -37,6 +37,7 @@ The Drizzle schema lives in `db/schema.ts`. `npm run db:generate` created the in
 - Six API tests using SQLite with the actual generated migration: anonymous protection, parent/family isolation, forged body IDs, stale-write rejection, same-origin checks, roles, body limits, profile/name persistence and family limits.
 - `npx tsx tests/accounts.ts` runs the existing UI against the actual API and a shared SQLite database in simulated browsers: onboarding, explicit import, cross-browser persistence, separate parent families, conflict/reload, failed-save retry, no cloud names in localStorage, Arabic UI and native sign-in/out links.
 - Bilingual game launches at all levels, session switching, back navigation, result assignment, Clubhouse and timer regressions.
+- `npx tsx tests/account-cache.ts`: a legacy caching worker cannot receive a parent-data request until the privacy contract is upgraded; failed updates send no API request and remain retryable.
 - Production Worker artifact and offline asset tests, including exclusion of API/authentication responses from the cache.
 
 The authenticated test identities exist only in the test harness. Production has no development sign-in route, shared password, or fallback identity. Browser OAuth interaction and real-device visual/touch testing remain manual verification steps when browser control is unavailable. The implementation uses the supported Sites identity boundary; tests do not claim to test the hosting platform's internal cookie/header verification.

@@ -1,4 +1,4 @@
-export const accountCopy:Record<string,string>={
+export const accountCopy:Record<string,string>={"Refresh Paperclub to update offline privacy protection before signing in.":"حدّث بيبركلب عشان تتحدث حماية الخصوصية بدون نت قبل تسجيل الدخول.",
 "My family":"عائلتي",
 "Parent sign in":"دخول ولي الأمر",
 "Checking your parent account…":"نتحقق من حساب ولي الأمر…",

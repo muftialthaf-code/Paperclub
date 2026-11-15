@@ -1,10 +1,11 @@
+import {ensurePrivateApiReady} from './privateApi';
 import React,{createContext,useContext,useEffect,useState}from'react';
 export type Family={id:string,name:string,role:'owner'|'editor'|'viewer',createdAt:string};
 export type Parent={id:string,email:string|null,displayName:string};
 type Account={user:Parent|null,account:{displayName:string,createdAt:string}|null,families:Family[],provider:'chatgpt'};
 const blank:Account={user:null,account:null,families:[],provider:'chatgpt'};
 export class AccountError extends Error{constructor(public code:string,public status=0){super(code)}}
-export async function accountRequest<T>(path:string,init:RequestInit={}):Promise<T>{try{const response=await fetch(path,{...init,credentials:'same-origin',cache:'no-store',headers:{...(init.body?{'Content-Type':'application/json'}:{}),...init.headers}});const data=await response.json();if(!response.ok)throw new AccountError(data.error||'accounts_unavailable',response.status);return data as T}catch(error){if(error instanceof AccountError)throw error;throw new AccountError('connection_failed')}}
+export async function accountRequest<T>(path:string,init:RequestInit={}):Promise<T>{try{try{await ensurePrivateApiReady()}catch{throw new AccountError('private_worker_update')}const response=await fetch(path,{...init,credentials:'same-origin',cache:'no-store',headers:{...(init.body?{'Content-Type':'application/json'}:{}),...init.headers}});const data=await response.json();if(!response.ok)throw new AccountError(data.error||'accounts_unavailable',response.status);return data as T}catch(error){if(error instanceof AccountError)throw error;throw new AccountError('connection_failed')}}
 type Context=Account&{status:'loading'|'ready'|'unavailable',error:string,selected:Family|null,refresh:()=>Promise<void>,select:(id:string)=>void,createFamily:(name:string,displayName:string)=>Promise<boolean>,renameFamily:(name:string)=>Promise<boolean>,saveName:(name:string)=>Promise<boolean>};
 const Context=createContext<Context|null>(null);
 export default function AccountProvider({children}:{children:React.ReactNode}){
