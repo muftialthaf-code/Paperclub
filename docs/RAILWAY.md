@@ -81,3 +81,35 @@ npx tsx scripts/check-ui.ts
 PostgreSQL integration tests use an isolated random schema and remove only that test schema. They exercise real verification and reset tokens with an injected mailer, session revocation, forged identity headers, cross-family access, conflicting writes, transaction rollback, migrations and Google redirect construction. A real Google account login and real mail delivery require configured providers and a live deployment.
 
 For local startup, use `.env.example` as a variable checklist and inject environment variables in your shell or process manager; the server does not load dotenv files automatically. Run migrations, then `npm start` from the repository root. Local HTTP requires NODE_ENV other than production and an HTTP APP_ORIGIN. Never use local test credentials in production.
+
+## First-time provider setup, step by step
+
+You can prepare providers while GitHub is being connected. Google sign-in can work before email delivery is ready. Use the exact app origin above for the first deployment.
+
+### Google
+
+1. Open https://console.cloud.google.com/ and create or select a project named Paperclub.
+2. Open Google Auth Platform. Complete Branding with app name **Paperclub**, your support email and your developer contact email. Choose **External** audience so parents outside your Google organization can use it.
+3. While the app is in Testing, add your Google email under Audience → Test users.
+4. Open Clients → Create client → **Web application**. Name it **Paperclub Railway**.
+5. Add this Authorized JavaScript origin: `https://paperclub-web-production.up.railway.app`
+6. Add this Authorized redirect URI: `https://paperclub-web-production.up.railway.app/api/auth/callback/google`
+7. Save the client. In Railway → Paperclub → paperclub-web → Variables, add `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` together using the two values Google provides. Do not put them in GitHub or chat.
+8. After code is deployed, use Continue with Google and your listed test user. For a public launch, complete Google's production audience/publishing requirements and provide your actual product privacy information.
+
+### Verification and password-reset email with Resend
+
+1. Create an account at https://resend.com/.
+2. Open Domains → Add domain. Use a domain you own, or a dedicated subdomain such as `mail.yourdomain.com`.
+3. Copy the exact DNS records Resend provides into the DNS provider for that domain. Wait until Resend reports verification succeeded. The records depend on your domain; do not copy example DNS values.
+4. Open API Keys → Create API key. Prefer **Sending access** restricted to your verified domain.
+5. In the same Railway web service's Variables, add these together:
+   - `EMAIL_FROM`: `Paperclub <accounts@your-verified-domain>` (use your real verified sender domain).
+   - `RESEND_API_KEY`: the API key from Resend.
+6. Apply the variables and deploy/redeploy the web service. Create a parent account, receive and follow the verification email, then test Forgot your password and sign-out.
+
+For a full public email/password launch, a verified sending domain is needed. Resend's onboarding sender is suitable only for limited testing under Resend's recipient restrictions. If you do not own a domain yet, Google can be enabled first while you choose one. We never substitute a test sender for working public email delivery.
+
+### What to share back
+
+Tell the assistant **Google variables added** and/or **Resend variables added**. If something fails, share the error message, not the client secret, API key, password, verification URL or reset token. Once GitHub is connected and the code is published, the assistant can deploy the existing service and verify its public health and enabled-provider flags. Real inbox delivery and real Google consent still need a parent to complete the browser flows.
