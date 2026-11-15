@@ -1,7 +1,7 @@
 import React,{useState,useEffect}from'react';import{Play,Pause,RotateCcw,ArrowLeft,ArrowRight,Flag,Shuffle,Plus,Minus,Eye}from'lucide-react';
 import TimerSoundToggle from'./TimerSoundToggle';import{prepareTimerSound,playTimerBuzzer}from'./timerSound';import{noPropsGames,noPropsRules}from'./noPropsCatalog';import{spokenPrompt}from'./noPropsContent';
 import{noPropsDuration,noPropsRemaining,createNoPropsGame,startNoPropsTimer,pauseNoPropsTimer,resetNoPropsTimer,expireNoPropsTimer,endNoPropsRound,noPropsPoint,noPropsDecision,nextSpokenQuestion,nextYesNoQuestion,associationTurn,type NoPropsState}from'./noPropsEngine';
-export default function NoPropsGame({state:s,onChange,onLeave,onRecord,soundEnabled,onSoundChange}:{state:NoPropsState,onChange:(s:NoPropsState)=>void,onLeave:()=>void,onRecord:()=>void,soundEnabled:boolean,onSoundChange:(value:boolean)=>void}){
+export default function NoPropsGame({state:s,onChange,onLeave,onSetup,onRecord,soundEnabled,onSoundChange}:{state:NoPropsState,onChange:(s:NoPropsState)=>void,onLeave:()=>void,onSetup?:()=>void,onRecord:()=>void,soundEnabled:boolean,onSoundChange:(value:boolean)=>void}){
  const[now,tick]=useState(Date.now());useEffect(()=>{const id=setInterval(()=>tick(Date.now()),150);return()=>clearInterval(id)},[]);
  const remaining=noPropsRemaining(s,now);const seconds=Math.ceil(remaining/1000);const meta=noPropsGames.find(g=>g.id===s.game)!;const player=s.config.players[s.player];const review=s.phase==='review';const hasTimer=s.game!=='np-truths'&&(s.config.timed||s.config.prep>0&&['ready','prep'].includes(s.phase));
  useEffect(()=>{if(s.deadline&&remaining===0){playTimerBuzzer(`spoken:${s.runId}:${s.round}:${s.turn}:${s.phase}:${s.deadline}`,soundEnabled);onChange(expireNoPropsTimer(s))}},[s.deadline,remaining,s.phase]);
@@ -32,5 +32,5 @@ export default function NoPropsGame({state:s,onChange,onLeave,onRecord,soundEnab
  {s.game!=='np-truths'&&!review&&<button className="secondary wide" onClick={()=>onChange(endNoPropsRound(s))}><Flag size={16}/>End Round</button>}
  <button className="primary wide np-main-action" onClick={next}>{s.game==='np-rapid'?'New sequence · next player':title}<ArrowRight size={18}/></button>
  <button className="text-button end" onClick={()=>onChange({...s,phase:'finished',deadline:null})}><Flag size={16}/>Finish game</button></div>
- <details><summary>Rules refresher</summary>{noPropsRules[s.game].map(r=><p key={r}>{r}</p>)}</details></section>{s.config.scoring&&scores}</div><button className="text-button end" onClick={onLeave}><ArrowLeft size={16}/>Save & leave</button></section>;
+ <details><summary>Rules refresher</summary>{noPropsRules[s.game].map(r=><p key={r}>{r}</p>)}</details></section>{s.config.scoring&&scores}</div><button className="text-button end" onClick={onSetup||onLeave}><ArrowLeft size={16}/>Rules & settings</button></section>;
 }

@@ -23,7 +23,7 @@ export default function SpeedDrawing({state, onChange, onLeave,onRecord}: Props)
   return <section className={`speed-game${game.difficulty==='Hard'?' adult-speed':''}`} aria-labelledby="speed-title">
     <header className="speed-heading">
       <div><h1 id="speed-title">Speed Drawing</h1><p>Reveal a card. Draw on paper. Guess together.</p></div>
-      <button className="speed-leave" aria-label="Back to games" onClick={onLeave}><ArrowLeft size={20}/></button>
+      <button className="speed-leave" aria-label="Back to rules and settings" onClick={onLeave}><ArrowLeft size={20}/></button>
       <div className="speed-status" aria-live="polite" aria-atomic="true"><strong>Round {game.round}</strong><label className="speed-level"><span className="sr-only">Difficulty</span><select aria-label="Speed Drawing difficulty" value={game.difficulty||'Medium'} onChange={e=>onChange(createSpeedRound(game,e.target.value))}><option value="Easy">Easy · Kids</option><option value="Medium">Medium · Kids</option><option value="Hard">Hard · Adults</option></select></label><span>{revealed}/16 revealed</span></div>
     </header>
     <div className="mystery-grid" aria-label="16 mystery drawing cards">
