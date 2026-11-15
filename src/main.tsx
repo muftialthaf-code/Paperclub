@@ -94,7 +94,7 @@ function App() {
     const [count, setCount] = useState('Any players');
     const [query, setQuery] = useState('');
     useEffect(()=>{setQuery('')},[locale]);
-    useEffect(()=>{setPlaying(false);setActive(null);setRecordOpen(false)},[privateScope]);
+    const lastScope=React.useRef(privateScope);useEffect(()=>{if(lastScope.current!==privateScope){setPlaying(false);setActive(null);setRecordOpen(false);lastScope.current=privateScope}},[privateScope]);
     const lastAccount=React.useRef(account.user?.id);useEffect(()=>{if(lastAccount.current!==account.user?.id){privateGameState.clear();lastAccount.current=account.user?.id}},[account.user?.id]);
     const [answer, setAnswer] = useState('');
     const [coord, setCoord] = useState('');
