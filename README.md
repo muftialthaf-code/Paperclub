@@ -1,10 +1,10 @@
 # Paperclub
-A parent-operated, screen-free family game platform. React 19, TypeScript, Vite and Tailwind. No accounts, backend, analytics or external AI.
+A parent-operated, screen-free family game platform. React 19, TypeScript, Vite and Tailwind. Public games plus optional parent login and private, server-backed family accounts. No child logins or external AI.
 
 ## Run
 `npm install`, then `npm run dev`.
-`npm run build` creates the deployable `dist/`.
-`npm test` validates generation and puzzle answers.
+`npm run build` creates the existing frontend plus the deployable Worker in `dist/server/`.
+`npm test` validates generation and puzzle answers. `npm run test:accounts` and `npx tsx tests/accounts.ts` validate the parent-account API and UI against a migrated database.
 `node tests/journeys.mjs` checks Speed Drawing and complete journeys for the other seven games in a simulated DOM.
 `node tests/speed-cards.mjs` checks the exact mystery-card flow, resets, progress, direct launch, saved-state restoration and migration from the previous game.
 `node tests/offline.mjs` checks first-load asset caching and offline responses.
@@ -38,7 +38,7 @@ Older saved paper grids and escape adventures keep their original board/puzzles.
 
 `node tests/scattergories.mjs` checks the complete setup/play/comparison/next-round flow, timer controls and expiry, sound, manual ending, both scoring modes, teams and persisted resume.
 
-## Family clubhouse (first release)
+## Family clubhouse (original device-only release)
 The Clubhouse navigation opens parent-managed family and guest profiles, parties, confirmed results, per-game personal records, separate child/adult and guest leaderboards, monthly standings, parent awards and downloadable SVG certificates. No login or backend is required.
 
 - `src/clubModel.ts`: versioned profile/result/party/award data, validated backups, safe profile merge/removal, club-point calculations and escaped certificate generation.
@@ -81,3 +81,6 @@ Timer expiry never chooses a new challenge or speaker. Preparation expiry waits 
 `npm test` includes collection integrity and content/state-machine assertions. `node tests/no-props.mjs` exercises all 11 games at all three difficulties, preparation/speaking separation, rapid sequences, spoken-outcome scoring, answer privacy, replay and persisted resume. Run the original game, Clubhouse, timer and offline checks for regressions. Visual/mobile QA remains unverified without the managed browser-control tool.
 
 The timer alert now uses an arena-style sustained horn: two square-wave harmonic families at 120/180 Hz share one normalised periodic oscillator. A strong 12 ms attack, 1.15-second hold and short tail replace the former soft fading tone. Total alert length is 1.28 seconds, with output headroom retained. `src/timerSound.test.ts` checks harmonic construction, envelope, deduplication and mute; actual phone/speaker timbre is not auditioned by the automated tests.
+
+## Parent accounts and private families
+The parent-account build supersedes the device-only storage description for signed-in families. Sign in with ChatGPT creates a private parent identity; each family’s profiles, scores, parties and awards are authorised and stored server-side. Anonymous play and the explicitly labelled device-only Clubhouse remain available. See [docs/ACCOUNTS.md](docs/ACCOUNTS.md) for architecture, data privacy, migrations, tests and current commercial scope.
