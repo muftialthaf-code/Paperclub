@@ -100,3 +100,13 @@ bdi{unicode-bidi:isolate}
 [dir=rtl] .steps>div>span{left:auto;inset-inline-start:0}
 
 [dir=rtl] .word-ladder-words>span{transform:scaleX(-1)}
+
+.account-panel{max-width:1180px;margin:28px auto 0;padding:30px;border:1px solid var(--line);border-radius:14px;background:#fff}
+.account-welcome{display:grid;grid-template-columns:1.5fr 1fr;gap:40px;align-items:start}
+.account-panel h2{font-size:30px;margin:7px 0 12px}.account-panel h3{font-size:18px;margin-block:8px}.account-panel p{margin-block:8px}
+.account-panel a.primary,.account-panel a.secondary{text-decoration:none;margin-block:10px}.account-welcome aside{background:var(--paper);padding:24px;border-radius:10px}.account-welcome aside svg{color:var(--teal)}
+.family-account>header{display:flex;align-items:start;justify-content:space-between;gap:20px}.family-selector{display:flex;gap:20px;align-items:end;flex-wrap:wrap;margin-block:20px}.family-selector label{min-width:250px;flex:1}.family-selector select{display:block;width:100%;padding:12px;border:1px solid var(--line);border-radius:8px;margin-top:8px;background:var(--paper)}
+.family-create{padding:20px;background:var(--paper);border-radius:10px;margin-block:18px}.family-create input,.parent-settings input{display:block;width:100%;margin-block:8px 16px;border:1px solid var(--line);padding:12px;border-radius:8px;background:#fff;color:var(--ink)}
+.family-status{display:flex;align-items:center;flex-wrap:wrap;gap:12px;padding:15px;border-radius:8px;background:#edf5f2;color:var(--ink);font-size:13px}.family-status button{font-size:12px}.device-import{padding:20px;border:1px dashed var(--line);border-radius:10px;margin-block:20px}.parent-settings{margin-top:20px}.parent-settings form{max-width:480px;margin-block:20px}.club-write-scope{border:0;margin:0;padding:0;min-width:0}.account-nav{white-space:nowrap;padding:9px 12px;font-size:12px;min-height:40px}.nav-wrap{column-gap:18px}.account-panel .feedback{padding:14px}
+@media(max-width:900px){.account-panel{margin-inline:20px}.account-nav{font-size:11px}.nav-wrap{flex-wrap:wrap}.account-welcome{gap:20px}}
+@media(max-width:650px){.account-panel{margin:18px 14px 0;padding:20px}.account-welcome{grid-template-columns:1fr}.family-account>header{flex-wrap:wrap}.family-selector{display:block}.family-selector>button{margin-top:12px}.account-panel h2{font-size:27px}.family-selector label{min-width:0}.account-nav{order:1}.account-nav+.nav-play{display:none}}

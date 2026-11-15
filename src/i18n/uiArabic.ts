@@ -1,8 +1,9 @@
+import{accountCopy}from'./accountCopy';
 import{uiPairs}from'./uiPairs';
 import{games,rules}from'../engine';
 import{arabicMetadata}from'../arabic/common';
 import{arabicRules}from'../arabic/rules';
-export const uiArabic:Record<string,string>={...uiPairs};
+export const uiArabic:Record<string,string>={...uiPairs,...accountCopy};
 for(const g of games){const meta=arabicMetadata[g.id];if(meta){uiArabic[g.name]=meta[0];uiArabic[g.desc]=meta[1];uiArabic[g.tag]=meta[2]}for(const [i,rule]of(rules[g.id]||[]).entries())uiArabic[rule]=arabicRules[g.id]?.[i]||arabicRules[g.id]?.at(-1)||rule}
 export const uiTemplates:Record<string,string>={
 '{0}, your turn':'{0}، دورك', 'Word {0} · {1}':'الكلمة {0} · {1}', 'Player of the month · {0}':'لاعب الشهر · {0}',

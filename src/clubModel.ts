@@ -1,12 +1,8 @@
 import {isArabic,getLocale} from './i18n/locale';
 import {t,awardNote} from './i18n/translate';
-export type Profile={id:string,name:string,avatar:string,color:string,kind:'family'|'guest',audience:'child'|'adult',retained:boolean,createdAt:string,archived:boolean};
-export type ResultEntry={profileId:string,name:string,score:number|null,winner:boolean,team:boolean};
-export type ClubResult={id:string,sessionId:string,gameId:string,difficulty:string,date:string,entries:ResultEntry[],cooperative:boolean,completedTogether:boolean,partyId?:string};
-export type Party={id:string,title:string,date:string,players:string[],games:string[],status:'active'|'finished'};
-export type Award={id:string,profileId:string,name:string,title:string,note:string,date:string,gameId?:string,partyId?:string,resultId?:string};
-export type ClubData={version:1,profiles:Profile[],results:ClubResult[],parties:Party[],awards:Award[],activePartyId:string|null};
-export const emptyClub=():ClubData=>({version:1,profiles:[],results:[],parties:[],awards:[],activePartyId:null});
+import {emptyClub,validateClub,type Profile,type ClubData,type ClubResult,type ResultEntry,type Award,type Party} from './shared/clubData';
+export {emptyClub,validateClub};
+export type {Profile,ClubData,ClubResult,ResultEntry,Award,Party};
 export const uid=()=>crypto.randomUUID();
 export const clubMonth=(value:string|Date=new Date())=>{const parts=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Riyadh',year:'numeric',month:'2-digit'}).formatToParts(new Date(value));return parts.find(p=>p.type==='year')!.value+'-'+parts.find(p=>p.type==='month')!.value};
 export const clubPoints=(r:ClubResult,e:ResultEntry)=>3+(r.cooperative?(r.completedTogether?2:0):(e.winner?2:0));
@@ -29,20 +25,6 @@ export function mergeProfiles(data:ClubData,source:string,target:string):ClubDat
  return {...data,profiles:data.profiles.filter(p=>p.id!==source),results,awards:data.awards.map(a=>a.profileId===source?{...a,profileId:target,name}:a),parties:data.parties.map(p=>({...p,players:[...new Set(p.players.map(id=>id===source?target:id))]}))};
 }
 export function removeProfile(data:ClubData,id:string):ClubData{return {...data,profiles:data.profiles.filter(p=>p.id!==id),results:data.results.map(r=>({...r,entries:r.entries.filter(e=>e.profileId!==id)})).filter(r=>r.entries.length),awards:data.awards.filter(a=>a.profileId!==id),parties:data.parties.map(p=>({...p,players:p.players.filter(p=>p!==id)}))}}
-export function validateClub(value:unknown):ClubData{
- const d=value as ClubData;const str=(v:unknown,max=500):v is string=>typeof v==='string'&&v.length<=max;const strs=(v:unknown)=>Array.isArray(v)&&v.length<=10000&&v.every(s=>str(s));
- if(!d||d.version!==1||!Array.isArray(d.profiles)||!Array.isArray(d.results)||!Array.isArray(d.parties)||!Array.isArray(d.awards))throw Error('This is not a Paperclub backup.');
- if([d.profiles,d.results,d.parties,d.awards].some(a=>a.length>10000))throw Error('This backup is too large.');
- const date=(v:unknown)=>str(v)&&!Number.isNaN(Date.parse(v));
- for(const p of d.profiles)if(!p||!str(p.id)||!str(p.name,40)||!p.name.trim()||!str(p.avatar,8)||!/^#[a-f\d]{6}$/i.test(p.color)||!['family','guest'].includes(p.kind)||!['child','adult'].includes(p.audience)||typeof p.retained!=='boolean'||typeof p.archived!=='boolean'||!date(p.createdAt))throw Error('Invalid player profile in backup.');
- const ids=new Set(d.profiles.map(p=>p.id));if(ids.size!==d.profiles.length)throw Error('Duplicate player IDs in backup.');
- for(const r of d.results)if(!r||!str(r.id)||!str(r.sessionId)||!str(r.gameId)||!str(r.difficulty)||!date(r.date)||typeof r.cooperative!=='boolean'||typeof r.completedTogether!=='boolean'||r.partyId!==undefined&&!str(r.partyId)||!Array.isArray(r.entries)||r.entries.some(e=>!e||!ids.has(e.profileId)||!str(e.name,40)||typeof e.winner!=='boolean'||typeof e.team!=='boolean'||e.score!==null&&(typeof e.score!=='number'||!Number.isFinite(e.score)))||new Set(r.entries.map(e=>e.profileId)).size!==r.entries.length)throw Error('Invalid game result in backup.');
- for(const p of d.parties)if(!p||!str(p.id)||!str(p.title,80)||!date(p.date)||!strs(p.players)||p.players.some(id=>!ids.has(id))||!strs(p.games)||!['active','finished'].includes(p.status))throw Error('Invalid party in backup.');
- for(const a of d.awards)if(!a||!str(a.id)||!ids.has(a.profileId)||!str(a.name,40)||!str(a.title,80)||!str(a.note,240)||!date(a.date)||['gameId','partyId','resultId'].some(key=>a[key as keyof Award]!==undefined&&!str(a[key as keyof Award])))throw Error('Invalid award in backup.');
- if(d.activePartyId!==null&&(!str(d.activePartyId)||!d.parties.some(p=>p.id===d.activePartyId&&p.status==='active')))throw Error('Invalid active party.');
- if(new Set(d.results.map(r=>r.sessionId)).size!==d.results.length||new Set(d.awards.map(a=>a.id)).size!==d.awards.length||new Set(d.parties.map(p=>p.id)).size!==d.parties.length)throw Error('Duplicate records in backup.');
- return d;
-}
 export const xml=(s:string)=>s.replace(/[<>&"']/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&apos;'}[c]!));
 export function certificateSvg(a:Award,gameName='Paperclub'){
  const wrap=(s:string,max:number)=>{const lines:string[]=[];let line='';for(const word of s.split(/\s+/)){if((line+' '+word).trim().length>max&&line){lines.push(line);line=word}else line=(line+' '+word).trim()}if(line)lines.push(line);return lines};
