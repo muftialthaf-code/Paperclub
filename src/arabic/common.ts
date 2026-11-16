@@ -1,4 +1,4 @@
-import{vocabularyMore,actionsMore,scenePlacesMore}from'./vocabularyExpansion';
+import{vocabularyMore,vocabularyMore2,actionsMore,scenePlacesMore}from'./vocabularyExpansion';
 export const levels=['Easy','Medium','Hard'] as const;
 export const list=(s:string)=>s.split('|').map(x=>x.trim()).filter(Boolean);
 export const choose=<T,>(a:T[])=>a[Math.floor(Math.random()*a.length)];
@@ -14,7 +14,7 @@ export const vocabulary:Record<string,string[]>={
 };
 export const drawingActions=list('يركب دراجة|يطبخ كبسة|يدور مفتاحه|يرتب مجلس|يطير بطائرة ورقية|يبني بيت رمل|يسقي شجرة|يقرأ قصة|يشيل مظلة|يرسم لوحة|يصلح ساعة|ينفخ بالون|يلعب كورة|يزرع نخلة|يفتح هدية|يسوي فطور|يتعلم السباحة|يجهز رحلة|يبني جسر|يرتب مكتبة');
 export const places=list('فوق سحابة|تحت البحر|وسط الصحراء|داخل قلعة|على القمر|في حديقة|داخل كهف|فوق جبل|في سوق قديم|وسط غابة');
-for(const[group,more]of Object.entries(vocabularyMore)){const seen=new Set(vocabulary[group]);for(const word of more)if(!seen.has(word)){seen.add(word);vocabulary[group].push(word)}}
+for(const[group,more]of [...Object.entries(vocabularyMore),...Object.entries(vocabularyMore2)]){const seen=new Set(vocabulary[group]);for(const word of more)if(!seen.has(word)){seen.add(word);vocabulary[group].push(word)}}
 {const seen=new Set(drawingActions);for(const action of actionsMore)if(!seen.has(action)){seen.add(action);drawingActions.push(action)}const seenPlaces=new Set(places);for(const place of scenePlacesMore)if(!seenPlaces.has(place)){seenPlaces.add(place);places.push(place)}}
 export function arabicDrawingPool(level:string){if(level==='Easy')return [...vocabulary['حيوانات'],...vocabulary['أغراض'],...vocabulary['أكل'],...vocabulary['أماكن'],...vocabulary['طبيعة'],...vocabulary['شخصيات ومهن']];if(level==='Medium')return vocabulary['حيوانات'].flatMap(animal=>drawingActions.map(a=>`${animal} ${a}`));return vocabulary['شخصيات ومهن'].flatMap(role=>places.map(place=>`${role} يحاول يرسم فكرة «${vocabulary['أفكار للكبار'][vocabulary['شخصيات ومهن'].indexOf(role)%vocabulary['أفكار للكبار'].length]}» ${place}`))}
 export const arabicMetadata:Record<string,[string,string,string]>={

@@ -28,9 +28,9 @@
         "Hard": 1075
       },
       "arabic": {
-        "Easy": 69,
-        "Medium": 70,
-        "Hard": 66
+        "Easy": 476,
+        "Medium": 423,
+        "Hard": 220
       }
     },
     {
@@ -80,7 +80,7 @@
         "Hard": 2784
       },
       "arabic": {
-        "Easy": 981,
+        "Easy": 1342,
         "Medium": 7800,
         "Hard": 5904
       }
@@ -106,8 +106,8 @@
         "Hard": "15,830 compositional sentences across 6 sentence patterns"
       },
       "arabic": {
-        "Easy": 317,
-        "Medium": 555,
+        "Easy": 340,
+        "Medium": 702,
         "Hard": 108
       }
     },
@@ -132,9 +132,9 @@
         "Hard": 600
       },
       "arabic": {
-        "Easy": 595,
+        "Easy": 956,
         "Medium": 386,
-        "Hard": 171
+        "Hard": 324
       }
     },
     {
@@ -199,7 +199,7 @@
       "arabic": {
         "Easy": "3 words from 120 original Arabic entries across 3 groups",
         "Medium": "3 words from 90 original Arabic entries across 3 groups",
-        "Hard": "4 or 5 words from 824 original Arabic entries across 5 groups"
+        "Hard": "4 or 5 words from 1188 original Arabic entries across 5 groups"
       }
     },
     {
@@ -249,9 +249,9 @@
         "Hard": 600
       },
       "arabic": {
-        "Easy": 595,
+        "Easy": 956,
         "Medium": 386,
-        "Hard": 171
+        "Hard": 324
       }
     },
     {
@@ -301,9 +301,9 @@
         "Hard": 324
       },
       "arabic": {
-        "Easy": 1048,
-        "Medium": 1521,
-        "Hard": 968
+        "Easy": 1352,
+        "Medium": 1757,
+        "Hard": 1205
       }
     },
     {
@@ -314,9 +314,9 @@
         "Hard": 415
       },
       "arabic": {
-        "Easy": 433,
-        "Medium": 403,
-        "Hard": 458
+        "Easy": 737,
+        "Medium": 639,
+        "Hard": 695
       }
     }
   ]
