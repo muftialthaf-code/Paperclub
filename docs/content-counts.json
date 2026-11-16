@@ -179,14 +179,14 @@
     {
       "id": "np-topics",
       "english": {
-        "Easy": 32,
-        "Medium": 32,
-        "Hard": 32
+        "Easy": 531,
+        "Medium": 472,
+        "Hard": 468
       },
       "arabic": {
-        "Easy": 36,
-        "Medium": 36,
-        "Hard": 36
+        "Easy": 501,
+        "Medium": 473,
+        "Hard": 468
       }
     },
     {
@@ -205,14 +205,14 @@
     {
       "id": "np-convince",
       "english": {
-        "Easy": 32,
-        "Medium": 32,
-        "Hard": 32
+        "Easy": 1282,
+        "Medium": 482,
+        "Hard": 383
       },
       "arabic": {
-        "Easy": 36,
-        "Medium": 36,
-        "Hard": 36
+        "Easy": 1286,
+        "Medium": 441,
+        "Hard": 452
       }
     },
     {
@@ -257,27 +257,27 @@
     {
       "id": "np-truths",
       "english": {
-        "Easy": 32,
-        "Medium": 32,
-        "Hard": 32
+        "Easy": 341,
+        "Medium": 447,
+        "Hard": 582
       },
       "arabic": {
-        "Easy": 36,
-        "Medium": 36,
-        "Hard": 36
+        "Easy": 402,
+        "Medium": 388,
+        "Hard": 396
       }
     },
     {
       "id": "np-scenario",
       "english": {
-        "Easy": 32,
-        "Medium": 32,
-        "Hard": 32
+        "Easy": 407,
+        "Medium": 482,
+        "Hard": 407
       },
       "arabic": {
-        "Easy": 36,
-        "Medium": 36,
-        "Hard": 36
+        "Easy": 411,
+        "Medium": 486,
+        "Hard": 411
       }
     },
     {
@@ -301,9 +301,9 @@
         "Hard": 324
       },
       "arabic": {
-        "Easy": 568,
-        "Medium": 1035,
-        "Hard": 500
+        "Easy": 928,
+        "Medium": 1361,
+        "Hard": 885
       }
     },
     {
@@ -314,9 +314,9 @@
         "Hard": 32
       },
       "arabic": {
-        "Easy": 72,
-        "Medium": 72,
-        "Hard": 72
+        "Easy": 433,
+        "Medium": 403,
+        "Hard": 458
       }
     }
   ]

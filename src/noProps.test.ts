@@ -90,3 +90,14 @@ test('Table Topics, Convince Us, What Would You Do?, Two Truths and Opposite Ans
  const words=['zero','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen'];
  assert.equal(words.length,20);
 });
+test('Arabic Table Topics, Convince Us, What Would You Do? and Two Truths hold ten times the originals with no repeats in one cycle; Opposite Answers answers are well formed',async()=>{
+ const{setLocale}=await import('./i18n/locale');setLocale('ar-SA' as any);
+ try{
+  for(const game of['np-topics','np-convince','np-scenario','np-truths'])for(const level of['Easy','Medium','Hard']){
+   const history:string[]=[];const texts=new Set<string>();
+   for(let i=0;i<360;i++){const p=spokenPrompt(game,level,history);assert.ok(!history.includes(p.key),`${game} ${level} repeated at ${i}`);history.push(p.key);texts.add(p.text)}
+   assert.equal(texts.size,360,`${game} ${level}`);
+  }
+  for(const level of['Easy','Medium','Hard'])for(let i=0;i<400;i++){const p=spokenPrompt('np-opposite',level,[]);assert.ok(p.text.length>3&&p.answer&&p.answer.length>0,`${level}: ${p.text}`);assert.ok(!/undefined|NaN/.test(p.text+p.answer))}
+ }finally{setLocale('en' as any)}
+});

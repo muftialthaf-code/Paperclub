@@ -5,7 +5,7 @@ const folded=Object.fromEntries(Object.entries(uiArabic).map(([key,value])=>[key
 const patterns=Object.entries(uiTemplates).sort((a,b)=>b[0].replace(/\{\d+\}/g,'').length-a[0].replace(/\{\d+\}/g,'').length).map(([source,target])=>({source,target,re:new RegExp('^'+source.trim().split(/\{\d+\}/).map(s=>s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('(.*?)')+'$','s')}));
 export function t(text:string):string{
  if(!isArabic()||!/[A-Za-z]/.test(text))return text;
- const value=text.trim();if(/[\u0600-\u06ff]/.test(value)&&(value.match(/[A-Za-z][A-Za-z0-9]*/g)||[]).every(token=>/^(Au|Fe|Na|Ag|H2O|HH|MM|[A-Z][1-9]?)$/.test(token)))return text;const match=uiArabic[value]??folded[value.toLowerCase()];if(match!==undefined)return text.replace(value,match);
+ const value=text.trim();if(/[\u0600-\u06ff]/.test(value)&&(value.match(/[A-Za-z][A-Za-z0-9]*/g)||[]).every(token=>/^(Au|Fe|Na|Ag|H2O|HH|MM|[A-Z][1-9]?|Pb|Sn|Zn|Hg|Ca|Mg|Al|He|Ne|Ar|Cl|Li|Si|Ni|Ti|Pt|Cu|Be|Br|Co|Cr|Mn|Mo|Ba|Cs|Rb|Sr|Ra|Rn|Xe|Kr|Zr|Cd|Sb|Bi|Pu|Th|M{0,3}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3}))$/.test(token)&&token!==''))return text;const match=uiArabic[value]??folded[value.toLowerCase()];if(match!==undefined)return text.replace(value,match);
  for(const p of patterns){const m=value.match(p.re);if(m)return text.replace(value,p.target.replace(/\{(\d+)\}/g,(_,n)=>/^(Award|Deduct|Remove point|Confirmed score|Profile for|A Paperclub certificate|\{0\} sank|\{0\}, your turn)/.test(p.source)?m[+n+1]||'':t(m[+n+1]||'')))}
  if(/^[A-Z]$/.test(value))return text;
  if(/^(paperclub|Paperclub|A|B|EN|English|HH:MM|HH|MM|MB|SVG|JSON|kg|Au|Fe|Na|Ag|H2O|parent@example\.com)$/i.test(value)||/^(https?:|mailto:|[\w.-]+@)/.test(value))return text;
