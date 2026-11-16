@@ -114,3 +114,28 @@ The business integration suite exercises real verified accounts/TOTP/recovery, o
 The UI journey suite exercises business second-factor login, vendor draft/prompt workflows, bilingual rendering, themed guest play, report events, private-family isolation and content removal after revocation. Existing engine and bilingual regressions remain applicable.
 
 The owner must personally enroll their authenticator and save recovery codes. Real venue branding/prompt approval, physical QR printing/scanning, real-device visual/audio acceptance, actual restaurant pilot feedback, native Najdi editorial acceptance and product-specific legal/contract review remain owner-led launch steps. Billing/payment-provider integration is intentionally deferred until the end, as requested. Do not claim these human acceptance steps passed from automated tests.
+
+
+## Organisation defaults, branch inheritance and homepage layout
+
+A business owner can maintain **organisation defaults**: brand colours, shared logo, welcome messages, the game list and the homepage layout (featured game, up to eight tenant-named categories, an optional bilingual promotional message). Defaults are a private draft until the platform owner publishes them, like branch branding.
+
+Each location chooses, per group, whether to **follow** the defaults (colours, logo, welcome messages, game list, homepage layout). Inheritance is resolved when guests load the venue (`effectiveBrand`), so re-publishing the defaults updates every branch that follows them immediately, while branches that do not follow them are untouched. A branch's display name, timing, prompts and QR codes are always its own. Existing locations inherit nothing. The shared logo must be a business-wide asset; branch-specific logos stay private to their branch.
+
+Guests see the optional promotional banner, the featured game and the venue's category chips on the library page; the existing search and filters remain. Categories only list games the venue has enabled.
+
+## Permanent QR identities
+
+Each QR is a random 128-bit token resolved at `/q/<token>`. It redirects to the venue page and never contains the slug, so branding, links or domains can change without reprinting. A venue can have one whole-venue QR and many table QRs with names (`Table 4`); each can be disabled, re-enabled or replaced individually. Replaced codes stop working permanently. Scans are counted per code and day (aggregate only). A valid table token shows its table name on the venue page; a token from another location is ignored. Guests still need the daily code to play, and the original `/venue/<slug>` links keep working. Inactive businesses, unpublished locations and disabled codes show a neutral “not active” page that names no tenant. Organisation-level QR codes that list several branches were not built: a public branch picker would expose the branch list and needs a separate design.
+
+## Consolidated reports
+
+Owners and unscoped team members can compare all branches of their business for 7, 30 or 90 days: page visits, QR scans, code entries, game starts and completions, completion rate, and the most started games, with CSV export. Counts are aggregate and carry no guest, family or answer data. Location-scoped staff and managers keep their per-location report only.
+
+## Tenant isolation
+
+Isolation is enforced in the API on every request (membership, role, location scope and business status) and verified by an automated matrix test that attempts about thirty management operations against another business's resources. Row-level security was evaluated and **not** adopted: the server uses a shared connection pool without a per-request database session, so adding it safely would mean refactoring every query. The matrix test is the guard; revisit RLS if the data layer is moved to per-request transactions.
+
+## Migrations
+
+`0004_org_defaults.sql` and `0005_venue_qr.sql` are additive (new nullable columns and two new tables). Back up PostgreSQL before deploying, as with any schema change.
