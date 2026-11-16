@@ -1,3 +1,4 @@
+import{adultConceptsMore,adultConceptsMore2}from'./content/drawingExpansion';
 import {isArabic} from './i18n/locale';
 import {arabicStoryTurn} from './arabic/paper';
 import type {Challenge, Settings, Puzzle} from './engine';
@@ -17,6 +18,7 @@ export const adultConcepts = [
  'The calm before the storm','The last straw','A fish out of water','A wild goose chase','An uphill battle',
  'The tip of the iceberg','A drop in the ocean','Walking on eggshells',
 ];
+{const seen=new Set(adultConcepts.map(c=>c.toLowerCase()));for(const concept of [...adultConceptsMore,...adultConceptsMore2])if(!seen.has(concept.toLowerCase())){seen.add(concept.toLowerCase());adultConcepts.push(concept)}}
 export const adultRoles = ['an architect','a historian','a diplomat','an inventor','a conductor','an accountant','a journalist','a curator','a cartographer','an entrepreneur','a negotiator','a philosopher'];
 const adultActions = ['negotiating with a dragon','pitching a completely impractical invention','conducting a silent orchestra','organising a meeting in zero gravity','trying to stop a domino effect','auctioning an invisible painting','rewriting the laws of physics','repairing a clock that runs backwards','mediating a dispute between robots','giving directions to a time traveller','balancing a budget made of balloons','designing a bridge between clouds'];
 const adultPlaces = ['in an upside down museum','at a crowded airport','inside a giant hourglass','on a moving chessboard','at the bottom of the ocean','in a library with no gravity','at a midnight train station','on a floating island','inside a paper city','at an underwater conference'];

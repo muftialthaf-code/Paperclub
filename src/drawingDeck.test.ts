@@ -5,7 +5,8 @@ import {drawingChallenges,drawingCategories,createSpeedRound,toggleSpeedCard} fr
 test('library has at least 200 unique challenges across all required categories',()=>{
  assert(drawingChallenges.length>=200);
  assert.equal(new Set(drawingChallenges).size,drawingChallenges.length);
- assert.equal(Object.keys(drawingCategories).length,11);
+ for(const category of ['Animals','Objects','Food','Vehicles','Characters','Places','Nature','Fantasy','Occupations','Funny situations','Imaginative combinations'])assert(drawingCategories[category]?.length>=100,category);
+ assert(drawingChallenges.length>=2500);
 });
 test('reset gives exactly 16 hidden cards, changes every word, increments round and never reuses a complete selection',()=>{
  let game=createSpeedRound();const combinations=new Set<string>();
@@ -26,7 +27,7 @@ test('individual challenges do not repeat until every word in the pool has been 
   }
   game=createSpeedRound(game);
  }
- assert(cycles>=50);
+ assert(cycles>=Math.floor(1000*16/drawingChallenges.length)-1,`only ${cycles} full cycles`);
 });
 test('revealing and hiding affects only the chosen card and never changes words',()=>{
  const game=createSpeedRound();const revealed=toggleSpeedCard(game,7);

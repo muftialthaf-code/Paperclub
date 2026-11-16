@@ -1,4 +1,5 @@
 import{themedDrawingWords}from'./business/venueContent';
+import{adultRolesMore,adultActionsMore,drawingExtras,funnyAnimals,funnyActions,comboAdjectives,comboObjects}from'./content/drawingExpansion';
 import {isArabic} from './i18n/locale';
 import {arabicDrawingPool} from './arabic/common';
 import {adultConcepts,adultRoles} from './adultGames';
@@ -16,8 +17,13 @@ export const drawingCategories: Record<string, string[]> = {
   'Funny situations': ['A cat wearing boots','A dinosaur baking a cake','An elephant on a bicycle','A chicken at the piano','A dog doing yoga','A penguin surfing','A bear eating spaghetti','A giraffe in a tiny car','A frog with a crown','A shark wearing sunglasses','A rabbit on roller skates','A turtle winning a race','An octopus knitting','A fox flying a kite','A lion at the hairdresser','A duck lifting weights','A mouse with a giant sandwich','A monkey taking a selfie','A zebra painting stripes','A whale blowing bubbles'],
   'Imaginative combinations': ['A robot gardener','A flying teapot','A castle on a cloud','A rocket-shaped treehouse','A dragon in a spacesuit','A mermaid riding a seahorse','A unicorn delivering pizza','A pirate on the moon','A submarine with wings','A house inside a mushroom','A balloon-powered bicycle','An ice cream planet','A tree that grows doughnuts','A dinosaur school bus','A moon made of cheese','A flower with an umbrella','A tiny city in a bottle','A superhero snowman','A library under the sea','A rainbow bridge to a castle'],
 };
+const article=(word:string)=>/^[aeiou]/i.test(word)?'An':'A';
+const fresh=(have:string[],more:string[])=>{const seen=new Set(have.map(w=>w.toLowerCase()));return more.filter(w=>{const k=w.toLowerCase();if(seen.has(k))return false;seen.add(k);return true})};
+for(const [category,extra] of Object.entries(drawingExtras)){drawingCategories[category]=drawingCategories[category]||[];drawingCategories[category].push(...fresh(drawingCategories[category],extra))}
+drawingCategories['Funny situations'].push(...fresh(drawingCategories['Funny situations'],funnyAnimals.flatMap(animal=>funnyActions.map(action=>`${article(animal)} ${animal} ${action}`))));
+drawingCategories['Imaginative combinations'].push(...fresh(drawingCategories['Imaginative combinations'],comboAdjectives.flatMap(adjective=>comboObjects.map(object=>`${article(adjective)} ${adjective} ${object}`))));
 export const drawingChallenges = [...new Set(Object.values(drawingCategories).flat())];
-export const adultDrawingChallenges = [...adultConcepts, ...adultRoles.flatMap(role => ['negotiating with a dragon','chasing a deadline','pitching an invention','juggling conflicting priorities','solving a paradox','mediating a robot argument','repairing a time machine','conducting a silent orchestra','auctioning invisible art','balancing a chaotic budget','mapping a dream','escaping an endless meeting'].map(action => `${role} ${action}`))];
+export const adultDrawingChallenges = [...new Set([...adultConcepts, ...[...adultRoles,...adultRolesMore].flatMap(role => ['negotiating with a dragon','chasing a deadline','pitching an invention','juggling conflicting priorities','solving a paradox','mediating a robot argument','repairing a time machine','conducting a silent orchestra','auctioning invisible art','balancing a chaotic budget','mapping a dream','escaping an endless meeting',...adultActionsMore].map(action => `${role} ${action}`))])];
 export function drawingPool(difficulty:string):string[]{
  if(difficulty==='Hard')return adultDrawingChallenges;
  if(difficulty==='Easy')return Object.entries(drawingCategories).filter(([category])=>!['Funny situations','Imaginative combinations','Fantasy'].includes(category)).flatMap(([,words])=>words);
