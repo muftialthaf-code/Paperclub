@@ -31,3 +31,16 @@ test('association rotates players without inventing a new spoken word, yes/no ad
 test('replay creates a new identity, stored sessions and optional scoring work with the Clubhouse',()=>{
  let s=createNoPropsGame('np-topics',noPropsDefaults('np-topics'));s={...s,phase:'finished'};const replay=createNoPropsGame(s.game,s.config);assert.notEqual(s.runId,replay.runId);assert.deepEqual(JSON.parse(JSON.stringify(s)),s);const seed=resultSeed({id:s.runId,game:s.game,noProps:s,settings:{players:[],teams:false,mode:'Competitive',age:8,difficulty:'Hard',duration:10,timer:30,theme:'Adventure',combo:true},scores:[],hits:[],completed:true,message:'',round:1});assert.equal(seed.slots.length,2);assert(seed.slots.every(slot=>slot.score===null&&!slot.winner));assert.equal(seed.difficulty,'Medium');
 });
+test('family mix gives adults Hard prompts and kids the chosen level, per turn and per game',()=>{
+ for(const game of noPropsGames.map(g=>g.id)){
+  const base={...noPropsDefaults(game,'Easy'),players:['Parent','Child','Grandparent'],family:true,adults:[true,false,true],randomSpeaker:false};
+  let s=createNoPropsGame(game,base);const seen:string[]=[];
+  for(let i=0;i<6;i++){seen.push(s.player+':'+s.level);s=createNoPropsGame(game,base,s)}
+  assert.deepEqual(seen,['0:Hard','1:Easy','2:Hard','0:Hard','1:Easy','2:Hard'],game);
+ }
+ const cfg={...noPropsDefaults('np-yesno','Medium'),players:['Parent','Child'],family:true,adults:[true,false]};
+ const adult=createNoPropsGame('np-yesno',cfg);assert.ok(adult.prompt.key.includes(':Hard:'));assert.ok(nextYesNoQuestion(adult).prompt.key.includes(':Hard:'));
+ const kid=createNoPropsGame('np-yesno',cfg,adult);assert.ok(kid.prompt.key.includes(':Medium:'));assert.ok(nextYesNoQuestion(kid).prompt.key.includes(':Medium:'));
+ const everyoneHard=createNoPropsGame('np-yesno',{...cfg,difficulty:'Hard',adults:[false,false]});assert.equal(everyoneHard.level,'Hard');
+ const plain=createNoPropsGame('np-yesno',{...cfg,family:false});assert.equal(plain.level,'Medium');
+});
