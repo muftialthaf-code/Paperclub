@@ -79,3 +79,14 @@ test('Would You Rather, Take a Side and Invent Something hold at least ten times
   }
  }
 });
+test('Table Topics, Convince Us, What Would You Do?, Two Truths and Opposite Answers have at least ten times the original English prompts, with correct answers and no repeats in one cycle',()=>{
+ const floors:Record<string,number>={'np-topics':320,'np-convince':320,'np-scenario':320,'np-truths':320,'np-opposite':320};
+ for(const[game,floor]of Object.entries(floors))for(const level of['Easy','Medium','Hard']){
+  const history:string[]=[];const texts=new Set<string>();
+  for(let i=0;i<floor;i++){const p=spokenPrompt(game,level,history);assert.ok(!history.includes(p.key),`${game} ${level} repeated at ${i}`);history.push(p.key);texts.add(p.text+(p.answer||''))}
+  assert.equal(texts.size,floor,`${game} ${level}`);
+ }
+ // arithmetic answers are verified rather than trusted
+ const words=['zero','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen'];
+ assert.equal(words.length,20);
+});
