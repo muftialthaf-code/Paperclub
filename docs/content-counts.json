@@ -80,22 +80,22 @@
         "Hard": 2784
       },
       "arabic": {
-        "Easy": 210,
-        "Medium": 320,
-        "Hard": 300
+        "Easy": 981,
+        "Medium": 7800,
+        "Hard": 5904
       }
     },
     {
       "id": "impossible",
       "english": {
-        "Easy": "30 animals × 8 actions",
-        "Medium": "30 animals × 20 actions",
+        "Easy": 4260,
+        "Medium": 8520,
         "Hard": "12 roles × 12 actions × 10 places × 8 constraints"
       },
       "arabic": {
-        "Easy": 240,
-        "Medium": 800,
-        "Hard": 800
+        "Easy": 2340,
+        "Medium": 7800,
+        "Hard": 7800
       }
     },
     {
@@ -106,8 +106,8 @@
         "Hard": "15,830 compositional sentences across 6 sentence patterns"
       },
       "arabic": {
-        "Easy": 101,
-        "Medium": 117,
+        "Easy": 317,
+        "Medium": 555,
         "Hard": 108
       }
     },
@@ -119,22 +119,22 @@
         "Hard": 404
       },
       "arabic": {
-        "Easy": 460,
-        "Medium": 927,
-        "Hard": 392
+        "Easy": 580,
+        "Medium": 1087,
+        "Hard": 475
       }
     },
     {
       "id": "detective",
       "english": {
-        "Easy": 60,
-        "Medium": 75,
+        "Easy": 978,
+        "Medium": 1442,
         "Hard": 600
       },
       "arabic": {
-        "Easy": 120,
-        "Medium": 90,
-        "Hard": 40
+        "Easy": 595,
+        "Medium": 386,
+        "Hard": 171
       }
     },
     {
@@ -199,7 +199,7 @@
       "arabic": {
         "Easy": "3 words from 120 original Arabic entries across 3 groups",
         "Medium": "3 words from 90 original Arabic entries across 3 groups",
-        "Hard": "4 or 5 words from 170 original Arabic entries across 5 groups"
+        "Hard": "4 or 5 words from 824 original Arabic entries across 5 groups"
       }
     },
     {
@@ -236,9 +236,9 @@
         "Hard": 324
       },
       "arabic": {
-        "Easy": 460,
-        "Medium": 927,
-        "Hard": 392
+        "Easy": 580,
+        "Medium": 1087,
+        "Hard": 475
       }
     },
     {
@@ -249,9 +249,9 @@
         "Hard": 600
       },
       "arabic": {
-        "Easy": 120,
-        "Medium": 90,
-        "Hard": 40
+        "Easy": 595,
+        "Medium": 386,
+        "Hard": 171
       }
     },
     {
@@ -301,9 +301,9 @@
         "Hard": 324
       },
       "arabic": {
-        "Easy": 928,
-        "Medium": 1361,
-        "Hard": 885
+        "Easy": 1048,
+        "Medium": 1521,
+        "Hard": 968
       }
     },
     {
