@@ -1,3 +1,4 @@
+import{themedPrompt}from'./business/venueContent';
 import {isArabic} from './i18n/locale';
 import {arabicSpoken} from './arabic/spoken';
 import{chooseContent}from'./newGames';import{dilemmaPools}from'./creativeGames';import{drawingCategories}from'./drawingDeck';import{adultConcepts}from'./adultGames';import{scatterCategories}from'./scatterEngine';
@@ -49,7 +50,7 @@ function combinations(game:string,level:string,count:number,history:string[]):Sp
  }
  return {key,text:'Tell a story using every word.',words};
 }
-export function spokenPrompt(game:string,level:string,history:string[],hardWords=5):SpokenPrompt{
+export function spokenPrompt(game:string,level:string,history:string[],hardWords=5):SpokenPrompt{const themed=themedPrompt(game,level,history);if(themed)return themed;
  if(isArabic())return arabicSpoken(game,level,history,hardWords);
  const difficulty=['Easy','Medium','Hard'].includes(level)?level:'Medium';
  if(game==='np-story60')return combinations(game,difficulty,difficulty==='Hard'?hardWords:3,history);

@@ -5,9 +5,9 @@ import{useAccount,accountRequest,AccountError}from'./AccountContext';
 type Snapshot={data:ClubData,revision:number,updatedAt:string};
 type Context={data:ClubData,commit:(next:ClubData)=>Promise<boolean>,error:string,clearError:()=>void,source:'device'|'cloud',loading:boolean,saveState:'saved'|'saving'|'failed'|'conflict',retry:()=>Promise<void>,reload:()=>Promise<void>,unsaved:ClubData|null,deviceData:ClubData,importDevice:()=>Promise<boolean>};
 const Context=createContext<Context|null>(null);
-export function ClubProvider({children}:{children:React.ReactNode}){
+export function ClubProvider({children,ephemeral=false}:{children:React.ReactNode,ephemeral?:boolean}){
  const account=useAccount();const family=account.selected;const scope=account.user&&family?account.user.id+':'+family.id:'';
- const[initial]=useState(()=>{try{const raw=localStorage.getItem('pc-clubhouse');return{data:raw?validateClub(JSON.parse(raw)):emptyClub(),error:''}}catch{return{data:emptyClub(),error:'Your saved clubhouse could not be read. Your existing browser data has not been overwritten.'}}});
+ const[initial]=useState(()=>{if(ephemeral)return{data:emptyClub(),error:''};try{const raw=localStorage.getItem('pc-clubhouse');return{data:raw?validateClub(JSON.parse(raw)):emptyClub(),error:''}}catch{return{data:emptyClub(),error:'Your saved clubhouse could not be read. Your existing browser data has not been overwritten.'}}});
  const[deviceData,setDeviceData]=useState(initial.data),[cloud,setCloud]=useState<{scope:string,snapshot:Snapshot}|null>(null),[error,setError]=useState(initial.error),[loading,setLoading]=useState(false),[saveState,setSaveState]=useState<Context['saveState']>('saved'),[unsaved,setUnsaved]=useState<ClubData|null>(null);
  const scopeRef=useRef(scope);scopeRef.current=scope;const busy=useRef(false),draft=useRef<ClubData|null>(null),current=useRef(cloud);current.current=cloud;
  const source=scope?'cloud':'device';const data=scope?(cloud?.scope===scope?cloud.snapshot.data:emptyClub()):deviceData;
@@ -16,7 +16,7 @@ export function ClubProvider({children}:{children:React.ReactNode}){
  useEffect(()=>{const protect=(event:BeforeUnloadEvent)=>{if(busy.current||draft.current){event.preventDefault();event.returnValue=''}};window.addEventListener('beforeunload',protect);return()=>window.removeEventListener('beforeunload',protect)},[]);
  async function commit(next:ClubData):Promise<boolean>{
   if(busy.current){setError('save_in_progress');return false}try{validateClub(next)}catch(e){setError(localizedError(e));return false}
-  if(!scope){try{localStorage.setItem('pc-clubhouse',JSON.stringify(next));setDeviceData(next);setError('');return true}catch(e){setError(localizedError(e));return false}}
+  if(!scope&&ephemeral){setDeviceData(next);return true}if(!scope){try{localStorage.setItem('pc-clubhouse',JSON.stringify(next));setDeviceData(next);setError('');return true}catch(e){setError(localizedError(e));return false}}
   const base=current.current;if(!family||base?.scope!==scope||loading){setError('family_loading');return false}
   if(family.role==='viewer'){setError('read_only');return false}
   if(draft.current&&draft.current!==next){setError('resolve_unsaved');return false}

@@ -1,5 +1,7 @@
+import{maintain}from'./maintenance';
 import{serve}from'@hono/node-server';import{serveStatic}from'@hono/node-server/serve-static';import{Pool}from'pg';import{createApp}from'./app';import{config}from'./config';
 const c=config(),pool=new Pool({connectionString:c.databaseUrl,max:Number(process.env.DB_POOL_SIZE||10),idleTimeoutMillis:30000,connectionTimeoutMillis:10000});pool.on('error',()=>console.error('Database connection failed'));const app=createApp(pool,c);
 app.use('/assets/*',async(context,next)=>{context.header('Cache-Control','public, max-age=31536000, immutable');await next()},serveStatic({root:'./dist'}));app.use('*',serveStatic({root:'./dist'}));app.get('*',serveStatic({path:'./dist/index.html'}));
-const server=serve({fetch:app.fetch,hostname:'0.0.0.0',port:Number(process.env.PORT||8080)},()=>console.log('Paperclub server is listening'));
+const housekeeping=()=>void maintain(pool).catch(()=>console.error('Venue retention maintenance failed'));housekeeping();setInterval(housekeeping,86400000).unref();
+const server=serve({overrideGlobalObjects:false,fetch:app.fetch,hostname:'0.0.0.0',port:Number(process.env.PORT||8080)},()=>console.log('Paperclub server is listening'));
 let stopping=false;async function stop(){if(stopping)return;stopping=true;server.close(async()=>{await pool.end();process.exit(0)});setTimeout(()=>process.exit(1),10000).unref()}process.on('SIGTERM',stop);process.on('SIGINT',stop);

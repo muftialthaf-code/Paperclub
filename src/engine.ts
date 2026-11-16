@@ -1,3 +1,4 @@
+import{themedPrompt}from'./business/venueContent';
 import {isArabic} from './i18n/locale';
 import {arabicGenerate,arabicAdventure} from './arabic/paper';
 import {noPropsGames,noPropsRules} from './noPropsCatalog';
@@ -27,7 +28,7 @@ const objects='bicycle umbrella telescope sandwich teapot backpack castle rocket
 const actions=['riding a bicycle','ordering a coffee','conducting an orchestra','learning to skateboard','baking a giant cake','flying a spaceship','walking on the moon','running a restaurant','building a sandcastle','playing the trumpet','painting a portrait','dancing in the rain','wearing roller skates','solving a mystery','juggling pineapples','taking a bubble bath','planting a forest','delivering pizza','winning a race','teaching yoga'];
 const locations=['under the sea','in a tiny kitchen','on a cloud','at the North Pole','inside a volcano','on a pirate ship','in a magical forest','at a birthday party','on Mars','in a floating castle'];
 export type Challenge={key?:string,from?:string,to?:string,minimum?:number,steps?:number,optionA?:string,optionB?:string,category?:string,text:string,answer?:string,hint?:string,instruction:string};
-export function generate(id:string,s:Settings,history:string[]=[]):Challenge {if(isArabic())return arabicGenerate(id,s,history);if(newGameIds.includes(id))return newGameChallenge(id,s,history);let c:Challenge={text:'',instruction:''};const hard=s.difficulty==='Hard';const easy=s.difficulty==='Easy';
+export function generate(id:string,s:Settings,history:string[]=[]):Challenge {const themed=themedPrompt(id,s.difficulty,history);if(themed)return{...themed,instruction:isArabic()?'ارسموا على الورق وشاركوا أفكاركم.':'Draw on paper and share your ideas.'};if(isArabic())return arabicGenerate(id,s,history);if(newGameIds.includes(id))return newGameChallenge(id,s,history);let c:Challenge={text:'',instruction:''};const hard=s.difficulty==='Hard';const easy=s.difficulty==='Easy';
 for(let attempt=0;attempt<500;attempt++){
 if(id==='speed'){c={text:pick(hard?adultConcepts:[...animals,...objects]),instruction:'Read this item aloud. Everyone draws it in order on their own paper.'};}
 if(hard&&id==='impossible')c=adultDrawing();

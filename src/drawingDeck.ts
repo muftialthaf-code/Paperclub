@@ -1,3 +1,4 @@
+import{themedDrawingWords}from'./business/venueContent';
 import {isArabic} from './i18n/locale';
 import {arabicDrawingPool} from './arabic/common';
 import {adultConcepts,adultRoles} from './adultGames';
@@ -42,8 +43,9 @@ const signature = (items: string[]) => [...items].sort().join('\u0000');
 
 /** A persisted shuffle bag uses every challenge before refilling. */
 export function createSpeedRound(previous?: SpeedRound, difficulty = previous?.difficulty || 'Medium'): SpeedRound {
-  const pool=isArabic()?arabicDrawingPool(difficulty):drawingPool(difficulty);
+  const custom=themedDrawingWords(difficulty);const pool=[...new Set([...custom,...(isArabic()?arabicDrawingPool(difficulty):drawingPool(difficulty))])];
   let remaining = previous && (previous.difficulty || 'Medium') === difficulty ? [...previous.remaining] : shuffled(pool);
+  if(!previous&&custom.length)remaining=[...custom,...remaining.filter(word=>!custom.includes(word))];
   const previousWords = new Set(previous?.items || []);
   const items: string[] = [];
   while (items.length < 16) {

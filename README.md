@@ -1,6 +1,9 @@
 # Paperclub
 A parent-operated, screen-free family game platform. React 19, TypeScript, Vite and Tailwind. Public games plus optional parent login and private, server-backed family accounts. No child logins or external AI.
 
+## Business platform
+Business/vendor access is at `/business`; the protected platform-owner console is `/admin`; guest venue links are `/venue/slug`. Read [docs/BUSINESS.md](docs/BUSINESS.md) for daily codes, staff permissions, approval, guest expiry, reporting and owner setup. Billing is deferred.
+
 ## Railway deployment
 This deployment uses Node 24, PostgreSQL, verified email/password with Gmail SMTP, and Google parent sign-in. Public games remain available without login. Run `npm run build:railway` to build, `npm run db:migrate:railway` before starting, then `npm start`. Required variables and provider setup are in [docs/RAILWAY.md](docs/RAILWAY.md). The original Sites deployment remains separate.
 

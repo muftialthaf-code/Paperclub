@@ -1,0 +1,116 @@
+# Paperclub Business — owner and venue operations
+
+This release extends the existing Railway app. Billing is deliberately deferred. No duplicate Railway app, database or paid email service is required.
+
+## Routes and first use
+
+- `/business`: public introduction, business sign-in and vendor dashboard.
+- `/admin`: protected platform-owner console.
+- `/business/help`: bilingual venue operating guide.
+- `/business/invite#TOKEN`: private, seven-day staff invitation link. Tokens are hashed in the database and accepted only by the matching verified email.
+- `/venue/LOCATION-SLUG`: permanent, branded guest page and daily-code entry.
+
+The owner allowlist is supplied through `PLATFORM_OWNER_EMAILS` in Railway Variables. It must contain only the actual platform owner's verified email(s). This is not a first-registrant-admin mechanism. Parent/family accounts stay separate from business permissions.
+
+Sign in, enable an authenticator under Account security, save the recovery codes, then unlock the owner console with a current code. Owner management unlocks last 30 minutes and are tied to the current server session. Google login alone does not unlock management. Recovery codes can be used to sign in and to unlock the console if the authenticator is lost. After unlocking with recovery, use Account security → Replace a lost authenticator; complete new enrollment before owner access resumes. Already-enabled owner-factor changes and secret/recovery retrieval require a current management unlock.
+
+## Onboard a venue
+
+1. The vendor signs in and requests business access, or the owner creates a business and shares its owner invitation link. Invitations are not emailed automatically.
+2. Activate the business in the owner console. Set an optional access end date; a blank end date means no scheduled expiry. These are manual access controls, not automated billing.
+3. Create each location with its own permanent URL slug.
+4. Save branding, a raster logo, English/Arabic welcome messages and enabled games as a draft.
+5. Submit selected themed prompts and request publication review.
+6. Use the owner review queue to review locations and approve or reject prompts. Approve and publish branding separately.
+7. Download a QR code or bilingual printable SVG table card. Display the current daily code separately inside the venue.
+8. Test the code, games, languages and expiry on real phones before inviting guests.
+
+Each business can have owners, managers and staff. Owners manage staff invitations; managers edit locations; staff view codes, QR material and aggregate reports. A manager/staff assignment can be limited to one location. Location-scoped managers cannot create branches or read business-wide audit records. Each business must retain an owner. Platform owners can manage all businesses only after authenticator unlock.
+
+## Branding and selected prompts
+
+The same game engines, rules, timers and scoring serve every venue. Name, logo, accessible colours, welcome messages and game selection are configurable. Logos are limited to 1 MB input, decoded and resized to at most 512×512, stripped of metadata and stored as PNG in PostgreSQL. SVG uploads and remote logo URL fetching are not accepted. Background colours must remain light and readable; contrast is validated server-side.
+
+Brand drafts are private. Publishing copies the reviewed draft into the live snapshot; later edits do not immediately replace the published branding. A vendor can restore published branding into a draft. Code timing settings apply when saved and are labelled separately from publication.
+
+Custom text prompts currently support Speed Drawing, The Impossible Drawing, Invent Something, Table Topics, Convince Us and What Would You Do? Structured word/cipher/puzzle games retain their validated libraries. Prompts are scoped to location, game, English/Arabic and difficulty. Easy/Medium remain for children; Hard remains for adults. Duplicates are rejected. Pending/rejected submissions may be edited; approved material must be revised as a new submission, preserving the existing approved copy until an owner chooses what to approve/reject.
+
+Approved prompts are fetched only after guest access is verified. Eligible text games mix approved custom prompts with standard content. The first themed drawing deck includes matching custom subjects, then retains the existing non-repetition shuffle behavior. No AI service is used.
+
+## Daily codes and guest sessions
+
+Defaults: `Asia/Riyadh`, rotation from **06:00**, new code every **exact 24 hours**, guest sessions **120 minutes**. Rotation hour and session duration (15–240 minutes) are configurable per location. A fixed UTC anchor enforces the exact 24-hour requirement; daylight-saving regions can see their wall-clock hour shift at a seasonal clock change. Riyadh has no DST.
+
+Codes use eight random characters, a keyed verifier and encrypted dashboard retrieval. Code generation is atomic across concurrent requests. Codes are not placed in permanent QR links, analytics URLs or audit details. The dashboard shows the code, actual expiry and a server-relative countdown; it refreshes automatically. Refreshing an existing valid guest session does not grant extra time.
+
+Replacing a leaked code stops new entries with the old code. Existing guest sessions keep their original expiry, including across daily rotation. An explicit End all guest sessions action revokes them. Business suspension, location suspension or expired business access also prevents guest API access.
+
+Failed-entry limits apply per location and hashed edge-provided IP; valid entries do not consume that failed-attempt allowance, so a venue's shared Wi-Fi is not capped at a handful of guests. Guessing is rate-limited. The app trusts Railway's proxy client-IP headers, not arbitrary account identity headers.
+
+Guest cookies are HttpOnly, SameSite Strict, Secure in production, scoped to the relevant venue API path and stored only as random-token hashes in PostgreSQL. Client timers use a monotonic elapsed clock derived from server timestamps, not the editable device wall clock. The guest page revalidates every 30 seconds and on focus/connection return. Expiry, failed revalidation or offline events clear themed content and unmount the game. Administrative revocations become visible by the next revalidation (up to 30 seconds for an already-open screen); API operations are denied immediately.
+
+A daily code can still be shared or re-entered from home until it rotates. This design is not proof of physical presence. Screenshots or content already seen cannot be recalled. Standard public Paperclub games remain a separate public offering; restaurant access restricts its branded experience and venue-only prompts, not the existence of the public game engines.
+
+## Privacy, caching and reports
+
+Guest play uses isolated, in-memory game/roster state. It does not load signed-in family accounts, display saved family profiles or write venue prompts/player names to localStorage. Guest reporting does not collect player names, written answers, family IDs or personal scores.
+
+All business and venue APIs use `private, no-store`. The service worker excludes `/api/`, `/business`, `/admin`, `/venue` and account/auth paths. Cache v3 retires older public caches. A private-API worker handshake runs before business requests. Public offline play remains separate; venue access requires connectivity.
+
+Reports are per authorized location, for 7/30/90 days:
+
+- Page loads are venue entry-page loads, not unique people.
+- Sessions are successful code entries creating a guest session, not verified restaurant visits.
+- Starts are game runs reported by the client and de-duplicated by run ID.
+- Completions are explicit host reports or existing game-finished events, de-duplicated per run. They are not independently adjudicated prizes or scores.
+- Failed code entries are aggregate counts.
+
+CSV export contains game labels and aggregate counts only. These numbers do not demonstrate returning customers, revenue uplift or physical presence. Pair them with real pilot feedback. A visit-passport/identified-return-visit system is not included in this release.
+
+Vendor dashboards expose only their business/location data. The owner customer list provides account identity/status and family counts, not private child rosters/results. Suspending a customer blocks private family/business access; public anonymous play remains available. Owner allowlist accounts cannot be suspended from this screen. Account/family hard deletion is not implemented by the business console; fulfill support requests through a reviewed process with the owner.
+
+Important admin actions have actor, business, target and timestamp audit records. Codes, invitation tokens, authenticator secrets and guest tokens are not written to audit details. Team invitations are shared by the authorized user; the system does not silently send external email.
+
+## Schema, operation and recovery
+
+`0002_business.sql` is additive. Keep applied migration checksums immutable. Better Auth's pinned two-factor plugin adds its own additive schema through the existing pre-deploy auth migration runner. The production health endpoint now checks both family and business/auth core tables.
+
+The existing production flow remains:
+
+```sh
+npm ci
+npm run build:railway
+npm run db:migrate:railway
+npm start
+```
+
+Do not run migrations manually against production merely to test; Railway pre-deploy handles the new release. Back up the existing database before future destructive/schema work. Use Railway's database backup controls and verify restore procedures in an isolated environment. No production dump is stored in this repository and no customer data is seeded by this release.
+
+Housekeeping runs on server startup and daily with an advisory lock. It removes old rate-limit/step-up rows, expired unused invitations, game/guest-access event data beyond the documented 90-day horizon, and unreferenced logos older than 30 days. It never deletes customers, private families, businesses, published content or audit history. It can also run via `npm run maintenance:railway` in the configured service environment. Avoid manually exposing secrets while invoking operational tools.
+
+Server errors return generic responses; production logs omit request bodies, secrets and private records. Health checks, deploy logs and Railway metrics remain the operational monitoring path. Vendor and owner audit screens provide application-level change history.
+
+## Verification and remaining owner work
+
+Run the PostgreSQL suite against a dedicated test database, not production:
+
+```sh
+TEST_DATABASE_URL='postgresql://LOCAL_TEST_DATABASE' npm run test:railway
+npx tsx tests/business.ts
+# After building dist, with Chromium installed and the local test database:
+TEST_DATABASE_URL='postgresql://LOCAL_TEST_DATABASE' CHROMIUM_PATH=/usr/bin/chromium npx tsx tests/business-browser.ts
+npm test
+npm run test:accounts
+npx tsx tests/parent-login.ts
+npx tsx tests/accounts.ts
+npx tsx tests/account-cache.ts
+node tests/bilingual.mjs
+npx tsx scripts/check-ui.ts
+npm run build:railway
+```
+
+The business integration suite exercises real verified accounts/TOTP/recovery, owner protections, tenant and staff isolation, draft approval, logo processing, code windows/concurrency/replacement, session expiry/revocation, shared-Wi-Fi valid entries, reports and safe retention. A real Chromium pass additionally exercised owner authenticator enrollment/unlock, vendor daily-code/branding screens, phone-sized guest entry and themed play, Arabic switching and horizontal-width assertions. This caught a Node adapter response-header issue; the server now uses native Request/Response objects so guest cookies survive real HTTP delivery. Screenshots were inspected for the tested desktop and phone viewports. This does not certify physical iOS/Android behavior.
+
+The UI journey suite exercises business second-factor login, vendor draft/prompt workflows, bilingual rendering, themed guest play, report events, private-family isolation and content removal after revocation. Existing engine and bilingual regressions remain applicable.
+
+The owner must personally enroll their authenticator and save recovery codes. Real venue branding/prompt approval, physical QR printing/scanning, real-device visual/audio acceptance, actual restaurant pilot feedback, native Najdi editorial acceptance and product-specific legal/contract review remain owner-led launch steps. Billing/payment-provider integration is intentionally deferred until the end, as requested. Do not claim these human acceptance steps passed from automated tests.

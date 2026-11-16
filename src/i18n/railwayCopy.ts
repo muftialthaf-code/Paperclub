@@ -1,4 +1,7 @@
 export const railwayCopy:Record<string,string>={
+'Email address':'الإيميل',
+'Create your business login':'سوّ حساب دخول للأعمال','Sign in to Paperclub Business':'سجّل دخولك لبيبركلب للأعمال','Use one verified account to manage your venues. Guests do not need accounts.':'استخدم حساب مؤكد واحد لإدارة أماكنك. الضيوف ما يحتاجون حسابات.','Continue to business':'كمّل للأعمال','Check your email to verify your account, then return to Business to request access.':'شيّك على إيميلك وأكد حسابك، ثم ارجع للأعمال واطلب وصول.',
+'Business':'للأعمال','Verify your sign-in':'تأكيد تسجيل الدخول','Recovery code':'رمز الاسترداد','Authenticator code':'رمز تطبيق المصادقة','Verify':'تحقق','Use authenticator':'استخدم تطبيق المصادقة','Use a recovery code':'استخدم رمز استرداد',
 'Back to games':'ارجع للألعاب',
 'Sign in or create an account':'سجّل دخولك أو سوّ حساب',
 'Sign in with your email and password or your Google account. Children and guests do not need their own login.':'سجّل بإيميلك وكلمة المرور أو حساب قوقل. الأطفال والضيوف ما يحتاجون حسابات دخول.',
