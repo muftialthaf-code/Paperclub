@@ -25,7 +25,7 @@ Sign in, enable an authenticator under Account security, save the recovery codes
 7. Download a QR code or bilingual printable SVG table card. Display the current daily code separately inside the venue.
 8. Test the code, games, languages and expiry on real phones before inviting guests.
 
-Each business can have owners, managers and staff. Owners manage staff invitations; managers edit locations; staff view codes, QR material and aggregate reports. A manager/staff assignment can be limited to one location. Location-scoped managers cannot create branches or read business-wide audit records. Each business must retain an owner. Platform owners can manage all businesses only after authenticator unlock.
+Each business can have owners, managers and staff. Owners manage staff invitations; managers edit locations; staff view codes, QR material and aggregate reports. A manager/staff assignment can be limited to one location. Location-scoped managers cannot create branches or read business-wide audit records. While a business is pending, suspended or past its access end date, its users can still sign in and read their dashboard, staff list and audit history, but every change (locations, invitations, drafts, prompts, logos, code replacement, session revocation) is refused with `business_inactive`; only the unlocked platform owner can act. The guest-visible venue name is the published brand's display name, so a manager's edit to the location name reaches guests only after the owner reviews and publishes it. Each business must retain an owner. Platform owners can manage all businesses only after authenticator unlock.
 
 ## Branding and selected prompts
 
