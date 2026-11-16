@@ -9,5 +9,6 @@ export async function maintain(pool:Pool){const db=await pool.connect();try{awai
  "DELETE FROM venue_daily_codes c WHERE expires_at<NOW()-INTERVAL '90 days' AND NOT EXISTS (SELECT 1 FROM venue_guest_sessions s WHERE s.code_id=c.id)",
  "DELETE FROM venue_page_visits WHERE day<CURRENT_DATE-90",
  "DELETE FROM venue_failed_entries WHERE day<CURRENT_DATE-90",
+ "DELETE FROM venue_qr_scans WHERE day<CURRENT_DATE-400",
  "DELETE FROM venue_assets a WHERE created_at<NOW()-INTERVAL '30 days' AND NOT EXISTS (SELECT 1 FROM venue_locations l WHERE l.draft->>'logoId'=a.id OR l.published->>'logoId'=a.id)"
 ])await db.query(sql);await db.query('COMMIT')}catch(e){await db.query('ROLLBACK');throw e}finally{db.release()}}
