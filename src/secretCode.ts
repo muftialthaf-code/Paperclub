@@ -1,3 +1,5 @@
+import{codeWordsMore}from'./content/codeWordsExpansion';
+import{wordBanks}from'./wordGames';
 import type {Challenge} from './engine';
 
 const choose = <T,>(values: readonly T[]) => values[Math.floor(Math.random() * values.length)];
@@ -9,6 +11,7 @@ export const easyCodeWords = (
   'book pen desk lamp bed rug door bell key lock kite ball doll drum boat ship car bus bike cart ' +
   'shoe sock hat cap coat vest ring bead comb soap cup bowl fork pan pot dish coin dice gift flag tent nest shell'
 ).split(/\s+/).filter(word => word.length >= 3 && word.length <= 4);
+{const seen = new Set(easyCodeWords);for (const word of [...codeWordsMore, ...Object.values(wordBanks).flat().map(w => w.toLowerCase()).filter(w => w.length >= 3 && w.length <= 4)]) if (!seen.has(word)) { seen.add(word); easyCodeWords.push(word); }}
 
 const familiarLongWords = [
   'butterfly','strawberry','sunflower','rainbow','dinosaur','elephant','giraffe','penguin',

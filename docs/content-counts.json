@@ -23,9 +23,9 @@
     {
       "id": "anagram",
       "english": {
-        "Easy": 65,
-        "Medium": 96,
-        "Hard": 110
+        "Easy": 833,
+        "Medium": 1019,
+        "Hard": 1075
       },
       "arabic": {
         "Easy": 69,
@@ -101,7 +101,7 @@
     {
       "id": "code",
       "english": {
-        "Easy": 119,
+        "Easy": 894,
         "Medium": "48+27 long words (age filtered), 34 short phrases",
         "Hard": "15,830 compositional sentences across 6 sentence patterns"
       },
