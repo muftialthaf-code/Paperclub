@@ -283,14 +283,14 @@
     {
       "id": "np-yesno",
       "english": {
-        "Easy": 32,
-        "Medium": 32,
-        "Hard": 32
+        "Easy": 1172,
+        "Medium": 814,
+        "Hard": 657
       },
       "arabic": {
-        "Easy": 72,
-        "Medium": 72,
-        "Hard": 72
+        "Easy": 1120,
+        "Medium": 851,
+        "Hard": 732
       }
     },
     {

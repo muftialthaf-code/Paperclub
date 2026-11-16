@@ -44,3 +44,15 @@ test('family mix gives adults Hard prompts and kids the chosen level, per turn a
  const everyoneHard=createNoPropsGame('np-yesno',{...cfg,difficulty:'Hard',adults:[false,false]});assert.equal(everyoneHard.level,'Hard');
  const plain=createNoPropsGame('np-yesno',{...cfg,family:false});assert.equal(plain.level,'Medium');
 });
+test('Don’t Say Yes or No has at least ten times the original questions per level in both languages and does not repeat in a long turn',async()=>{
+ const{setLocale}=await import('./i18n/locale');
+ for(const locale of ['en','ar-SA']){
+  setLocale(locale as any);
+  for(const level of ['Easy','Medium','Hard']){
+   const floor=locale==='en'?320:720;const seen=new Set<string>();const history:string[]=[];
+   for(let i=0;i<floor;i++){const p=spokenPrompt('np-yesno',level,history);assert.ok(!history.includes(p.key),`${locale} ${level} repeated inside one pool cycle at ${i}`);history.push(p.key);seen.add(p.text)}
+   assert.ok(seen.size>=floor,`${locale} ${level}: ${seen.size} distinct questions < ${floor}`);
+  }
+ }
+ setLocale('en' as any);
+});
