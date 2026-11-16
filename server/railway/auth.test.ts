@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {Pool} from 'pg';
+import {readdirSync} from 'node:fs';
 import {createAuth,type Mail} from './auth';
 import {createApp,publicRequest} from './app';
 import {config,type RailwayConfig} from './config';
@@ -29,7 +30,7 @@ test('real PostgreSQL: verified login, reset, revoked sessions, family isolation
  async function signUp(email:string){const r=await req('/api/auth/sign-up/email','POST',{name:'Parent',email,password:'a-family-test-password',callbackURL:c.origin+'/?account=1'});assert.equal(r.status,200,await r.clone().text());assert.equal(cookies(r).includes('session_token'),false);const message=mail.findLast(m=>m.to===email)!;assert.ok(message);const link=message.text.match(/https?:\/\/\S+$/)![0];const verified=await app.request(link);assert.equal(verified.status,302,await verified.clone().text());assert.ok(cookies(verified).includes('session_token'));return cookies(verified)}
  try{
   await migrate(db,'db/postgres');await migrate(db,'db/postgres');await migrateAuth(db,auth);await migrateAuth(db,auth);
-  assert.equal((await db.query('SELECT * FROM paperclub_migrations')).rowCount,2);
+  assert.equal((await db.query('SELECT * FROM paperclub_migrations')).rowCount,readdirSync('db/postgres').filter(f=>f.endsWith('.sql')).length);
   // Health check uses public schema in production; the isolated test verifies its own schema separately.
   const headers=await req('/api/auth-config');assert.equal(headers.headers.get('x-frame-options'),'DENY');assert.match(headers.headers.get('cache-control')!,/no-store/);
   const a=await signUp('alice@example.test'),b=await signUp('bob@example.test');

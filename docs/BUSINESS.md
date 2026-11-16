@@ -29,7 +29,7 @@ Each business can have owners, managers and staff. Owners manage staff invitatio
 
 ## Branding and selected prompts
 
-The same game engines, rules, timers and scoring serve every venue. Name, logo, accessible colours, welcome messages and game selection are configurable. Logos are limited to 1 MB input, decoded and resized to at most 512×512, stripped of metadata and stored as PNG in PostgreSQL. SVG uploads and remote logo URL fetching are not accepted. Background colours must remain light and readable; contrast is validated server-side.
+The same game engines, rules, timers and scoring serve every venue. Name, logo, accessible colours, welcome messages and game selection are configurable. Logos uploaded for a location (as the dashboard always does) are readable and usable only by that location's team; logos from before `0003_logo_location.sql` stay shared across their business. Logos are limited to 1 MB input, decoded and resized to at most 512×512, stripped of metadata and stored as PNG in PostgreSQL. SVG uploads and remote logo URL fetching are not accepted. Background colours must remain light and readable; contrast is validated server-side.
 
 Brand drafts are private. Publishing copies the reviewed draft into the live snapshot; later edits do not immediately replace the published branding. A vendor can restore published branding into a draft. Code timing settings apply when saved and are labelled separately from publication.
 
