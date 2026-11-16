@@ -2,3 +2,44 @@
 @media(max-width:900px){.business-header{padding:18px;padding-inline-end:145px;gap:12px;flex-wrap:wrap}.business-label{padding-inline-start:10px}.business-header-links{width:100%;margin:0}.business-layout{grid-template-columns:1fr}.business-sidebar{padding:15px;flex-direction:row;flex-wrap:wrap;border-inline-end:0;border-bottom:1px solid #deded3}.business-sidebar>.small{width:100%;margin:0}.business-sidebar>a,.business-sidebar>button{padding:10px;font-size:12px}.business-main{padding:24px 18px}.business-card{padding:20px}.business-hero{padding-top:35px}.business-hero h1{font-size:39px}.business-help{padding:20px;margin:20px auto}.business-features{gap:18px}.business-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.business-location-list>button{max-width:100%;flex-wrap:wrap}.business-list-row{align-items:start;flex-wrap:wrap}.venue-heading{padding:24px 20px;padding-top:50px}.venue-heading h1{font-size:32px}.venue-logo{max-width:100px;max-height:75px}.venue-session-clock{margin:0}.venue-entry{margin:28px 16px;padding:27px;max-width:none}.venue-entry h2{font-size:28px}.venue-session-actions{justify-content:flex-start;padding:0 18px;gap:12px}.venue-privacy{margin:20px 16px}.venue-games .site-header .brand{font-size:19px;max-width:210px}.business-tabs button{padding:10px;font-size:12px}.business-form-grid{grid-template-columns:1fr}.business-prompt-list article>div:first-child{flex-wrap:wrap}.business-main .actions{flex-wrap:wrap}}
 @media print{.business-header,.business-sidebar,.language-toggle,.business-tabs,.business-daily,.venue-session-actions{display:none!important}.business-layout{display:block}.business-card{break-inside:avoid;box-shadow:none}.business-main{padding:0}}
 .business-card input[type=checkbox]{padding:0;min-height:18px;box-sizing:border-box;margin:0}.business-game-checks label{row-gap:2px;min-height:52px}.business-review-row{background:transparent;border:0;border-bottom:1px solid #deded4;width:100%;text-align:start;font:inherit;cursor:pointer}
+/* Owner workspace: a plum shell and violet controls distinguish platform management. */
+.platform-admin{--ink:#302344;background:#f3f0fa;color:#302344}
+.platform-admin .business-header{background:#241833;border-color:#403052;color:#faf7ff}
+.platform-admin .business-header .brand,.platform-admin .business-header-links>a,.platform-admin .business-header-links .text-button{color:#faf7ff}
+.platform-admin .business-header .brand>span{color:#c4a8f0}
+.platform-admin .business-label{border-color:#69577d;color:#eee2ff;font-weight:700;letter-spacing:.02em}
+.platform-admin .business-sidebar{background:#302142;border-color:#493558;color:#e5d8f1}
+.platform-admin .business-sidebar>.small{color:#d1c1e2}
+.platform-admin .business-sidebar>button,.platform-admin .business-sidebar>a{color:#e3d6ef}
+.platform-admin .business-sidebar>button:hover,.platform-admin .business-sidebar>a:hover{background:#453057;color:#fff}
+.platform-admin .business-sidebar>button.active{background:#dec6fb;color:#362047;box-shadow:inset 3px 0 0 #ac77e0}
+[dir=rtl] .platform-admin .business-sidebar>button.active{box-shadow:inset -3px 0 0 #ac77e0}
+.admin-workspace-badge{display:flex;align-items:center;gap:7px;padding:10px 12px;margin-bottom:8px;border:1px solid #74518f;border-radius:8px;background:#40294f;color:#f1ddff;font-size:10px;font-weight:700;letter-spacing:.06em}
+.platform-admin .business-main h1,.platform-admin .business-main h2,.platform-admin .business-main h3,.platform-admin .business-hero h1{color:#352244}
+.platform-admin .eyebrow{color:#73429a}
+.platform-admin .business-card{background:#fff;border-color:#e0d7ec;box-shadow:0 4px 16px #3a205b06}
+.platform-admin .business-select:hover{border-color:#976bbd}
+.platform-admin .business-metrics>div{background:#eee5f8;border-color:#ddcdec;border-top:3px solid #9b6ac1}
+.platform-admin .business-metrics strong{color:#583077}
+.platform-admin .business-metrics span{color:#665173}
+.platform-admin .primary,.platform-admin .business-tabs button.active{background:#713c9a;color:#fff;border-color:#713c9a}
+.platform-admin .primary:hover{background:#5a2b80}
+.platform-admin .secondary{background:#fbf8ff;color:#613582;border-color:#ceb8e0}
+.platform-admin .secondary:hover{background:#efe2fb}
+.platform-admin .text-button,.platform-admin .business-main a{color:#704091}
+.platform-admin .business-tabs{border-color:#ddd0e9}
+.platform-admin .business-tabs button{color:#705b7b}
+.platform-admin .business-tabs button.active{color:#fff}
+.platform-admin .business-card label{color:#574265}
+.platform-admin .business-card input:not([type=checkbox]),.platform-admin .business-card select,.platform-admin .business-card textarea{color:#352244;border-color:#dbcee6}
+.platform-admin input:focus,.platform-admin select:focus,.platform-admin textarea:focus{outline:2px solid #9c6abc;outline-offset:2px}
+.platform-admin .business-table-wrap th{color:#745a85}
+.platform-admin .business-table-wrap td,.platform-admin .business-table-wrap th,.platform-admin .business-list-row{border-color:#e7dfed}
+.platform-admin .business-notice{background:#f1e9fa;border-color:#ddcbea;color:#57346f}
+.platform-admin .business-code{color:#643287}
+.platform-admin .business-daily{border-inline-start-color:#a573c7}
+.platform-admin .business-location-list .selected{background:#eee0f9;border-color:#aa83c5}
+.platform-admin .business-hero>p{color:#75617e}
+.platform-admin .parent-login-card{background:#fff;border-color:#dfd3e9}
+@media(max-width:900px){.platform-admin .business-sidebar{border-bottom-color:#58406a}.admin-workspace-badge{margin:0;align-self:center}.platform-admin .business-sidebar>.small{color:#decee9}}
+.platform-admin .business-sidebar>p.small,.platform-admin .business-sidebar>p.small bdi{color:#decfeb}
