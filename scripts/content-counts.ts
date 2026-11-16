@@ -1,3 +1,4 @@
+import{easyCategories,mediumCategories,hardCategories}from'../src/content/categoryExpansion';
 import{games}from'../src/engine';import{arabicDrawingPool,vocabulary}from'../src/arabic/common';import{arabicLadders,arabicAnagrams,arabicCodePools,arabicDictionary}from'../src/arabic/words';import{arabicCategories,arabicDilemmas,arabicInventions}from'../src/arabic/prompts';import{spokenBanks,rapidBanks,associationWords}from'../src/arabic/spoken';import{arabicLetters,arabicScatterCategories}from'../src/arabic/scatter';import{ladderPools,anagramPools}from'../src/wordGames';import{inventionPools,dilemmaPools}from'../src/creativeGames';import{drawingPool,drawingCategories}from'../src/drawingDeck';import{spokenLibraryCounts}from'../src/noPropsContent';import{scatterCategories,letterPool}from'../src/scatterEngine';import{adultConcepts,adultQuickCategories}from'../src/adultGames';import{easyCodeWords}from'../src/secretCode';import{writeFileSync,readFileSync}from'node:fs';import ts from'typescript';
 // Read literal English banks without changing or exporting their private implementation details.
 function literals(file:string,name:string):any{const sf=ts.createSourceFile(file,readFileSync(file,'utf8'),99,true);let value:any;function evaluate(n:ts.Node):any{if(ts.isStringLiteralLike(n))return n.text;if(ts.isArrayLiteralExpression(n))return n.elements.map(evaluate);if(ts.isObjectLiteralExpression(n))return Object.fromEntries(n.properties.filter(ts.isPropertyAssignment).map(p=>[p.name.getText(sf).replace(/['"]/g,''),evaluate(p.initializer)]));if(ts.isCallExpression(n)&&n.arguments[0]&&ts.isStringLiteralLike(n.arguments[0]))return n.arguments[0].text.split('|');return null}function walk(n:ts.Node){if(ts.isVariableDeclaration(n)&&n.name.getText(sf)===name&&n.initializer)value=evaluate(n.initializer);ts.forEachChild(n,walk)}walk(sf);return value}
@@ -6,14 +7,14 @@ function english(id:string,d:string):number|string{
  if(id==='speed')return drawingPool(d).length;if(id==='ladder')return ladderPools[d].length;if(id==='anagram')return anagramPools[d].length;if(id==='invent')return inventionPools[d].length;if(['rather','np-side'].includes(id))return dilemmaPools[d].length;
  if(oldBanks[id.replace('np-','')])return oldBanks[id.replace('np-','')][d];
  if(id==='code')return d==='Easy'?easyCodeWords.length:d==='Medium'?`${familiar.length}+${advanced.length} long words (age filtered), ${phrases.length} short phrases`:'15,830 compositional sentences across 6 sentence patterns';
- if(id==='five')return d==='Hard'?adultQuickCategories.length:d==='Easy'?8:69;
+ if(id==='five')return d==='Hard'?adultQuickCategories.length:d==='Easy'?8+easyCategories.length:69+mediumCategories.length;
  if(id==='detective')return d==='Hard'?adultConcepts.length:d==='Easy'?60:75;
  if(id==='impossible')return d==='Hard'?'12 roles × 12 actions × 10 places × 8 constraints':d==='Easy'?'30 animals × 8 actions':'30 animals × 20 actions';
  if(id==='story')return d==='Hard'?'3 openings/theme × 4 complications × 8 writing constraints':'3 openings/theme × 6 discoveries × 10 locations';
  if(id==='escape')return `${d==='Easy'?4:d==='Medium'?5:6} sequential procedural locks; existing parameterised library`;
  if(id==='battle')return `${d==='Easy'?5:d==='Medium'?7:9}×${d==='Easy'?5:d==='Medium'?7:9} paper board; no prompt bank`;
  if(id==='scatter')return `${letterPool(d,12).length} eligible letters at 12 categories / ${scatterCategories.filter(c=>d==='Easy'?c.level===0:d==='Hard'?c.level>=1:c.level<=1).length} categories`;
- if(id==='np-countdown'||id==='np-rapid')return scatterCategories.filter(c=>d==='Easy'?c.level===0:d==='Hard'?c.level===2:c.level<=1).length;
+ if(id==='np-countdown'||id==='np-rapid')return scatterCategories.filter(c=>d==='Easy'?c.level===0:d==='Hard'?c.level===2:c.level<=1).length+(d==='Easy'?easyCategories:d==='Hard'?hardCategories:mediumCategories).length;
  if(id==='np-association')return d==='Hard'?adultConcepts.length:d==='Easy'?drawingCategories.Animals.length+drawingCategories.Objects.length:drawingCategories.Fantasy.length+drawingCategories.Occupations.length+drawingCategories.Nature.length;
  if(id==='np-opposite')return opposites[d].length;
  if(id==='np-story60')return d==='Hard'?'4 or 5 words from 6 curated groups (single-word entries only)':'3 words from 5 curated groups (single-word entries only)';

@@ -114,14 +114,14 @@
     {
       "id": "five",
       "english": {
-        "Easy": 8,
-        "Medium": 69,
-        "Hard": 32
+        "Easy": 363,
+        "Medium": 919,
+        "Hard": 404
       },
       "arabic": {
-        "Easy": 72,
-        "Medium": 72,
-        "Hard": 72
+        "Easy": 460,
+        "Medium": 927,
+        "Hard": 392
       }
     },
     {
@@ -231,14 +231,14 @@
     {
       "id": "np-countdown",
       "english": {
-        "Easy": 39,
-        "Medium": 75,
-        "Hard": 27
+        "Easy": 394,
+        "Medium": 925,
+        "Hard": 324
       },
       "arabic": {
-        "Easy": 72,
-        "Medium": 72,
-        "Hard": 72
+        "Easy": 460,
+        "Medium": 927,
+        "Hard": 392
       }
     },
     {
@@ -296,14 +296,14 @@
     {
       "id": "np-rapid",
       "english": {
-        "Easy": 39,
-        "Medium": 75,
-        "Hard": 27
+        "Easy": 394,
+        "Medium": 925,
+        "Hard": 324
       },
       "arabic": {
-        "Easy": 180,
-        "Medium": 180,
-        "Hard": 180
+        "Easy": 568,
+        "Medium": 1035,
+        "Hard": 500
       }
     },
     {

@@ -1,4 +1,5 @@
 import{adultConceptsMore,adultConceptsMore2}from'./content/drawingExpansion';
+import{hardTrivia}from'./content/categoryExpansion';
 import {isArabic} from './i18n/locale';
 import {arabicStoryTurn} from './arabic/paper';
 import type {Challenge, Settings, Puzzle} from './engine';
@@ -38,6 +39,7 @@ export const adultQuickCategories = [
  'logical fallacies','countries that share a border with France','musical genres originating before nineteen fifty',
  'jobs that require professional certification','metals used in electronics','methods of generating electricity',
 ];
+{const seen=new Set(adultQuickCategories.map(c=>c.toLowerCase()));for(const category of hardTrivia)if(!seen.has(category.toLowerCase())){seen.add(category.toLowerCase());adultQuickCategories.push(category)}}
 export function adultQuickChallenge(): Challenge {
  return {text:`Name three ${choose(adultQuickCategories)}.`,instruction:'Adult challenge: read the category, then start the timer. The player writes three different valid examples. Agree on answers together before awarding a point.'};
 }

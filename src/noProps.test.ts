@@ -56,3 +56,16 @@ test('Don’t Say Yes or No has at least ten times the original questions per le
  }
  setLocale('en' as any);
 });
+test('Countdown and Rapid Fire have ten times the original categories in English and in Arabic Medium, with no repeats inside one pool cycle',async()=>{
+ const{setLocale}=await import('./i18n/locale');
+ const floors:Record<string,Record<string,number>>={en:{Easy:390,Medium:750,Hard:270},'ar-SA':{Medium:720}};
+ for(const[locale,levels]of Object.entries(floors)){
+  setLocale(locale as any);
+  for(const game of['np-countdown','np-rapid'])for(const[level,floor]of Object.entries(levels)){
+   const history:string[]=[];const seen=new Set<string>();
+   for(let i=0;i<floor;i++){const p=spokenPrompt(game,level,history);assert.ok(!history.includes(p.key),`${locale} ${game} ${level} repeated at ${i}`);history.push(p.key);seen.add(p.text)}
+   assert.ok(seen.size>=floor,`${locale} ${game} ${level}: ${seen.size} < ${floor}`);
+  }
+ }
+ setLocale('en' as any);
+});

@@ -1,5 +1,6 @@
 import{themedPrompt}from'./business/venueContent';
 import{yesNoExpansion}from'./content/yesnoExpansion';
+import{easyCategories,mediumCategories,hardCategories}from'./content/categoryExpansion';
 import {isArabic} from './i18n/locale';
 import {arabicSpoken} from './arabic/spoken';
 import{chooseContent}from'./newGames';import{dilemmaPools}from'./creativeGames';import{drawingCategories}from'./drawingDeck';import{adultConcepts}from'./adultGames';import{scatterCategories}from'./scatterEngine';
@@ -59,8 +60,9 @@ export function spokenPrompt(game:string,level:string,history:string[],hardWords
  if(game==='np-side'){const c=chooseContent(dilemmaPools[difficulty],history);return {key:c.key,text:'Which side will you defend?',a:c.a,b:c.b}}
  if(game==='np-countdown'||game==='np-rapid'){
   const pool=scatterCategories.filter(c=>difficulty==='Easy'?c.level===0:difficulty==='Hard'?c.level===2:c.level<=1);
-  const c=chooseContent(pool.map(c=>({...c,key:`${game}:${difficulty}:${c.id}`})),history);
-  return {key:c.key,text:game==='np-rapid'?`Name one example: ${c.title.toLowerCase()}.`:c.title,required:game==='np-countdown'?(difficulty==='Easy'?3:difficulty==='Medium'?5:7):1};
+  const extras=(difficulty==='Easy'?easyCategories:difficulty==='Hard'?hardCategories:mediumCategories).map((phrase,i)=>({id:`x${i}`,title:phrase[0].toUpperCase()+phrase.slice(1)}));
+  const c=chooseContent([...pool,...extras].map(c=>({...c,key:`${game}:${difficulty}:${c.id}`})),history);
+  return {key:c.key,text:game==='np-rapid'?`Name one example: ${c.title[0].toLowerCase()+c.title.slice(1)}.`:c.title,required:game==='np-countdown'?(difficulty==='Easy'?3:difficulty==='Medium'?5:7):1};
  }
  if(game==='np-association')return choose(difficulty,game,difficulty==='Hard'?adultConcepts:difficulty==='Easy'?[...drawingCategories.Animals,...drawingCategories.Objects]:[...drawingCategories.Fantasy,...drawingCategories.Occupations,...drawingCategories.Nature],history);
  if(game==='np-opposite'){const c=choose(difficulty,game,opposites[difficulty],history);const[text,answer]=c.text.split('~');return {...c,text,answer}}
