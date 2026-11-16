@@ -1,3 +1,4 @@
+import{easyDilemmas,mediumDilemmas,hardDilemmas,easyInventions,mediumInventions,hardInventions}from'./content/dilemmaExpansion';
 export type Invention={key:string,category:string,text:string};
 export type Dilemma={key:string,category:string,a:string,b:string};
 function inventions(level:string,rows:string):Invention[]{return rows.trim().split('\n').map((row,i)=>{const[category,text]=row.split('|');return {key:`invent:${level}:${i}`,category,text}})}
@@ -258,3 +259,12 @@ Leadership|Make a process transparent but slower|Keep the process efficient and 
 Environment|Design a product people repair themselves|Design a shared service so fewer products are needed
 `),
 };
+// Expanded libraries: appended after the original curated items so existing prompt keys stay stable.
+{
+ const dilemmaRows:Record<string,Array<{category:string,a:string,b:string}>>={Easy:easyDilemmas,Medium:mediumDilemmas,Hard:hardDilemmas};
+ for(const level of Object.keys(dilemmaRows)){const pool=dilemmaPools[level];const seen=new Set(pool.flatMap(d=>[d.a.toLowerCase(),d.b.toLowerCase()].sort().join('|')));
+  for(const row of dilemmaRows[level]){const signature=[row.a.toLowerCase(),row.b.toLowerCase()].sort().join('|');if(seen.has(signature))continue;seen.add(signature);pool.push({key:`rather:${level}:${pool.length}`,...row})}}
+ const ideaRows:Record<string,Array<{category:string,text:string}>>={Easy:easyInventions,Medium:mediumInventions,Hard:hardInventions};
+ for(const level of Object.keys(ideaRows)){const pool=inventionPools[level];const seen=new Set(pool.map(i=>i.text.toLowerCase()));
+  for(const row of ideaRows[level]){const key=row.text.toLowerCase();if(seen.has(key))continue;seen.add(key);pool.push({key:`invent:${level}:${pool.length}`,...row})}}
+}

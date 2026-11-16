@@ -36,27 +36,27 @@
     {
       "id": "invent",
       "english": {
-        "Easy": 40,
-        "Medium": 40,
-        "Hard": 40
+        "Easy": 519,
+        "Medium": 440,
+        "Hard": 440
       },
       "arabic": {
-        "Easy": 120,
-        "Medium": 120,
-        "Hard": 120
+        "Easy": 1320,
+        "Medium": 1320,
+        "Hard": 1320
       }
     },
     {
       "id": "rather",
       "english": {
-        "Easy": 40,
-        "Medium": 40,
-        "Hard": 40
+        "Easy": 870,
+        "Medium": 710,
+        "Hard": 418
       },
       "arabic": {
-        "Easy": 36,
-        "Medium": 36,
-        "Hard": 36
+        "Easy": 866,
+        "Medium": 700,
+        "Hard": 414
       }
     },
     {
@@ -218,14 +218,14 @@
     {
       "id": "np-side",
       "english": {
-        "Easy": 40,
-        "Medium": 40,
-        "Hard": 40
+        "Easy": 870,
+        "Medium": 710,
+        "Hard": 418
       },
       "arabic": {
-        "Easy": 36,
-        "Medium": 36,
-        "Hard": 36
+        "Easy": 866,
+        "Medium": 700,
+        "Hard": 414
       }
     },
     {

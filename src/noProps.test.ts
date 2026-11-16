@@ -69,3 +69,13 @@ test('Countdown and Rapid Fire have ten times the original categories in English
  }
  setLocale('en' as any);
 });
+test('Would You Rather, Take a Side and Invent Something hold at least ten times the original items per level in both languages with unique keys',async()=>{
+ const{dilemmaPools,inventionPools}=await import('./creativeGames');const{arabicDilemmas,arabicInventions}=await import('./arabic/prompts');
+ for(const level of['Easy','Medium','Hard']){
+  for(const[name,pool]of Object.entries({enDilemmas:dilemmaPools[level],enInventions:inventionPools[level],arDilemmas:arabicDilemmas[level],arInventions:arabicInventions[level]})){
+   assert.ok(pool.length>=(name==='arDilemmas'||name==='enDilemmas'?(level==='Hard'?360:400):400),`${name} ${level}: ${pool.length}`);
+   assert.equal(new Set(pool.map((p:any)=>p.key)).size,pool.length,`${name} ${level} keys`);
+   assert.equal(new Set(pool.map((p:any)=>p.text||[p.a,p.b].sort().join('|'))).size,pool.length,`${name} ${level} duplicates`);
+  }
+ }
+});
