@@ -19,7 +19,7 @@ import { newGameIds } from './newGames';
 import TimerSoundToggle from './TimerSoundToggle';
 import { prepareTimerSound, playTimerBuzzer } from './timerSound';
 import Clubhouse from './Clubhouse';
-import { ClubProvider, useClub, ProfileRoster } from './ClubContext';
+import { ClubProvider, useClub, ProfileRoster, useRosterAutofill } from './ClubContext';
 import { uid } from './clubModel';
 import ResultRecorder from './ResultRecorder';
 import { resultSeed } from './resultBridge';
@@ -143,6 +143,7 @@ function App({venue}:{venue?:VenueRuntime}={}) {
     } }, [session?.game, session?.settings.difficulty, session?.audienceEdition, session?.completed]);
     function openRules(requireSave=false) { if (!session || !g)
         return; const now = Date.now(); const paused={ ...session, deadline: null, seconds: session.deadline ? Math.max(0, Math.ceil((session.deadline - now) / 1000)) : session.seconds, scatter: session.scatter ? { ...session.scatter, milliseconds: scatterTime(session.scatter, now), deadline: null } : undefined, noProps: session.noProps ? pauseNoPropsTimer(session.noProps, now) : undefined }; try{const storageKey=locale==='en'?'pc-session':'pc-session-ar-SA';if(privateScope)privateGameState.set('private:'+privateScope+':'+storageKey,paused);else localStorage.setItem(storageKey,JSON.stringify(paused))}catch(error){if(requireSave)throw error} setSession(paused); setSettings({ ...session.settings, difficulty: session.speed?.difficulty || session.settings.difficulty }); setRecordOpen(false); setPage('Game Library'); setActive(g); setEditingSession(true); setPlaying(false); }
+    useRosterAutofill({ active: !!active && !venue && !editingSession && active.collection === 'paper' && !['speed', 'scatter'].includes(active.id), names: settings.players, teams: settings.teams, min: active?.min || 2, max: Math.min(active?.max || 8, 8), apply: players => setSettings({ ...settings, players }) });
     useEffect(()=>{registerLanguageGuard({active:playing||editingSession,leave:()=>{if(playing||editingSession){openRules(true);setPage('Game Library')}setActive(null);setEditingSession(false)}});return()=>registerLanguageGuard({active:false,leave:()=>{}})},[playing,editingSession,session]);
 function backToRules() { if (window.history.state?.paperclubView === 'play')
         window.history.back();

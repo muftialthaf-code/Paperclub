@@ -2,7 +2,9 @@
 
 ## Family mix (spoken games)
 
-In the setup of every No Props game, **Family mix** lets parents mark which players are adults. Kids keep the chosen level (Easy or Medium); adult turns use Hard. The level is fixed when a round starts (`NoPropsState.level`) and shown in the turn header. Choosing Hard for everyone switches Family mix off. Paper games where everyone plays at once are unchanged.
+Setup screens (paper games, Scattergories and every No Props game) start with the Clubhouse family instead of "Player 1…n": active family profiles in Clubhouse order, capped at the game's maximum and padded to its minimum. Visiting guests and archived profiles are left out. Auto-fill runs once per roster and only while every name is still a placeholder, so names a player typed or chose are never overwritten. It works for signed-in families (after the cloud Clubhouse loads) and for the device-only Clubhouse.
+
+In the No Props setup, **Family mix** reads each player's Adult or Child setting from their Clubhouse profile (matched by name), so nobody is asked. Only a name that is not in the Clubhouse gets an "Adult" tick box. Family mix switches on by default when the roster has both adults and children. Kids keep the chosen level (Easy or Medium) and adult turns use Hard. The level is fixed when a round starts (`NoPropsState.level`) and shown in the turn header. Choosing Hard for everyone, or team play, switches Family mix off. Paper games where everyone plays at once are unchanged.
 
 ## Content libraries
 

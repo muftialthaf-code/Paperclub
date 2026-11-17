@@ -1,4 +1,4 @@
-import{localizedError}from'./i18n/errors';import{tx}from'./i18n/translate';
+import{localizedError}from'./i18n/errors';import{defaultPlayer}from'./i18n/locale';import{tx}from'./i18n/translate';
 import React,{createContext,useContext,useState,useEffect,useRef}from'react';
 import{emptyClub,validateClub,uid,type ClubData,type Profile}from'./clubModel';
 import{useAccount,accountRequest,AccountError}from'./AccountContext';
@@ -31,6 +31,30 @@ export function useClub(){const c=useContext(Context);if(!c)throw Error('Clubhou
 export const profileIcons = ['🦊', '🐼', '🦁', '🐙', '🦋', '🚀', '🌻', '⭐', '🐧', '🐉', '🎨', '🦉'];
 export const profileColors = ['#e0f2ee', '#ece7fb', '#ffe3d8', '#fff0c7', '#deebfb'];
 export function makeProfile(name: string, kind: 'family' | 'guest' = 'family', audience: 'child' | 'adult' = 'child'): Profile { return { id: uid(), name: name.trim().slice(0, 40), kind, audience, avatar: profileIcons[0], color: profileColors[0], retained: kind === 'family', createdAt: new Date().toISOString(), archived: false }; }
+/** Names such as "Player 2" that the player has not customised. */
+export const isPlaceholderName=(name:string)=>/^(Player|Team|اللاعب|الفريق) \d+$/.test(name.trim());
+const sameName=(a:string,b:string)=>a.trim().toLocaleLowerCase()===b.trim().toLocaleLowerCase();
+/** Active family members, in Clubhouse order. Visiting guests are not part of the default table. */
+export const rosterProfiles=(data:ClubData)=>data.profiles.filter(p=>!p.archived&&p.kind==='family');
+/** The saved profile for a typed name, if any (guests included, so a guest's Adult or Child setting still counts). */
+export const profileByName=(data:ClubData,name:string):Profile|undefined=>data.profiles.find(p=>!p.archived&&sameName(p.name,name));
+/**
+ * Start a setup screen with the Clubhouse family instead of "Player 1…n".
+ * Runs once per roster, only while every name is still a placeholder, so nothing the player typed or chose is overwritten.
+ */
+export function useRosterAutofill({active,names,teams,min,max,apply}:{active:boolean,names:string[],teams:boolean,min:number,max:number,apply:(names:string[],roster:Profile[])=>void}){
+ const{data,loading}=useClub();const done=useRef('');
+ useEffect(()=>{
+  if(!active){done.current='';return}
+  if(loading||teams)return;
+  const roster=rosterProfiles(data);if(!roster.length)return;
+  const signature=roster.map(p=>p.id).join(',');if(done.current===signature)return;
+  if(!names.every(isPlaceholderName))return;
+  done.current=signature;
+  const picked=roster.slice(0,max);const next=picked.map(p=>p.name);while(next.length<min)next.push(defaultPlayer(next.length));
+  apply(next,picked);
+ },[active,loading,teams,data.profiles,names.join('|')]);
+}
 export function ProfileRoster({ names, onNames, teams = false }: {
     names: string[];
     onNames: (names: string[]) => void;
