@@ -21,6 +21,25 @@ Warm, calm, paper-and-pen. A family should feel invited, never rushed. Big reada
 
 Type: Georgia (serif) for headings and the wordmark, Arial for body, Tajawal for Arabic (`src/fonts`). Buttons: `.primary` (ink fill), `.secondary` (white, outlined), `.text-button`. Pills and chips are rounded. Cards use `--line` borders with minimal shadow.
 
+### Type scale and targets (added in the design polish)
+
+Root font size is 16px. Nothing renders below **12px** (labels, eyebrows, tags and card metadata are 12–13px; card descriptions and helper text 14px; body 15–16px). Arabic body text is at least 15px in cards. Interactive targets are at least 44 × 44px: the favourite heart keeps a 32px visual circle inside a 44px hit area, the language switch buttons, tab-bar buttons, score steppers and close buttons are all 44px or more. Extra tokens: `--coral-deep` (hover for the coral call to action) and `--band-lavender` / `--band-peach` (full-bleed section bands).
+
+### Patterns added
+
+| Pattern | Where | Notes |
+|---|---|---|
+| Coral call to action | `.hero-buttons .primary`, `.quick-banner .primary` | One per screen; white on `--coral` is 4.9:1. Everything else stays ink. |
+| Section bands | `.collection-entry`, `.how-preview` | Full-bleed via a 100vw `::before`; keeps `scrollWidth` equal to the viewport. |
+| Game glyph | `src/GameGlyph.tsx`, `.game-glyph` | One lucide icon per game id, top-start of the card art. Add a line to the map when a game is added. |
+| Phone card | `.game-card` at 560px and below | One card per row: art column on the left (start side), text on the right, heart at the top end. |
+| Bottom tab bar | `src/TabBar.tsx`, `.tab-bar` | Phones only (700px and below). Uses existing translated labels. Guest venues get Game Library, Quick Play, How to Play. Business and Parent sign in live in the hamburger menu on phones. |
+| Language bar | `.language-toggle` | A slim 44px bar at the top of the page (absolute, not floating). Content sits at the inline end. |
+| Sticky start button | `.setup-modal .primary.wide` | Stays visible at the bottom of the setup dialog while the form scrolls. |
+| Compact accordions | `details.business-card` | Collapsed dashboard sections are one row with the marker visible. |
+
+Motion is limited to a card fade-in, a card lift on hover (devices with hover), a twinkling star and a pop on the finish icon. All are disabled under `prefers-reduced-motion`.
+
 Breakpoints already in use: 1450, 1050/1000, 900, 700/650 and 360 px. Mobile is the primary target; test 390 × 844 first.
 
 ## Non-negotiables
@@ -41,7 +60,7 @@ Breakpoints already in use: 1450, 1050/1000, 900, 700/650 and 360 px. Mobile is 
 | Business, admin and venue styles | `src/business/business.css` |
 | Guest venue experience | `src/business/VenueExperience.tsx`, `VenueHome.tsx` |
 | Vendor dashboard | `src/business/BusinessApp.tsx`, `LocationPanel.tsx`, `DefaultsPanel.tsx`, `ChainReport.tsx`, `LayoutEditor.tsx` |
-| Games and setup screens | `src/main.tsx`, `NoPropsSetup.tsx`, `NoPropsGame.tsx`, `Scattergories.tsx`, `SpeedDrawing.tsx` |
+| Games and setup screens | `src/main.tsx`, `src/GameGlyph.tsx`, `src/TabBar.tsx`, `NoPropsSetup.tsx`, `NoPropsGame.tsx`, `Scattergories.tsx`, `SpeedDrawing.tsx` |
 | Clubhouse and accounts | `src/Clubhouse.tsx`, `FamilyAccounts.tsx`, `ParentLogin.tsx` |
 | Translations | `src/i18n/uiPairs.ts`, `src/i18n/translate.ts` |
 
