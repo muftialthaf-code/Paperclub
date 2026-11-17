@@ -33,7 +33,7 @@ Root font size is 16px. Nothing renders below **12px** (labels, eyebrows, tags a
 | Section bands | `.collection-entry`, `.how-preview` | Full-bleed via a 100vw `::before`; keeps `scrollWidth` equal to the viewport. |
 | Game glyph | `src/GameGlyph.tsx`, `.game-glyph` | One lucide icon per game id, top-start of the card art. Add a line to the map when a game is added. |
 | Phone card | `.game-card` at 560px and below | One card per row: art column on the left (start side), text on the right, heart at the top end. |
-| Bottom tab bar | `src/TabBar.tsx`, `.tab-bar` | Phones only (700px and below). Uses existing translated labels. Guest venues get Game Library, Quick Play, How to Play. Business and Parent sign in live in the hamburger menu on phones. |
+| Bottom tab bar | `src/TabBar.tsx`, `.tab-bar` | Phones only (700px and below). Uses existing translated labels. Guest venues get Game Library, Quick Play, How to Play. Business and Host sign in live in the hamburger menu on phones. |
 | Language bar | `.language-toggle` | A slim 44px bar at the top of the page (absolute, not floating). Content sits at the inline end. |
 | Sticky start button | `.setup-modal .primary.wide` | Stays visible at the bottom of the setup dialog while the form scrolls. |
 | Compact accordions | `details.business-card` | Collapsed dashboard sections are one row with the marker visible. |
@@ -91,3 +91,7 @@ TEST_DATABASE_URL=… BROWSER_OUTPUT_DIR=/some/dir CHROMIUM_PATH=/opt/pw-browser
 ```
 
 Browser tests need a dedicated local PostgreSQL (never the production database). Take screenshots at 390 × 844 (mobile), 768 × 1024 (tablet) and 1440 × 900 (desktop), in English and Arabic, before and after.
+
+## Terminology
+
+The person running a game, or owning a family account, is the **host**: they may be a parent, a friend, a grandparent or a café guest. Say "host" in gameplay, rules, guides and account screens (Arabic: المضيف). Only the certificate email, which is addressed to a child's parent or guardian, says "parent or guardian" (ولي الأمر). `src/wording.test.ts` guards gameplay text.

@@ -1,6 +1,6 @@
 # Paperclub on Railway
 
-This branch runs the existing 24-game bilingual app on Node 24 and PostgreSQL. Parent accounts use Better Auth with verified email/password and Google OAuth. Children and guests stay as profiles in a parent's private family; games work without signing in.
+This branch runs the existing 24-game bilingual app on Node 24 and PostgreSQL. Host accounts use Better Auth with verified email/password and Google OAuth. Children and guests stay as profiles in a parent's private family; games work without signing in.
 
 ## Prepared production resources
 
@@ -105,7 +105,7 @@ You can prepare providers before deployment. Google sign-in can work before emai
 
 ### Verification and password-reset email with Gmail
 
-Use the Gmail SMTP values in the provider section above. Enter the App Password only in Railway. After deployment, create a parent account and follow its email verification link; also test password reset and sign-out. A successful SMTP configuration check does not prove inbox delivery, so complete this with your real inbox before inviting other families.
+Use the Gmail SMTP values in the provider section above. Enter the App Password only in Railway. After deployment, create a host account and follow its email verification link; also test password reset and sign-out. A successful SMTP configuration check does not prove inbox delivery, so complete this with your real inbox before inviting other families.
 
 ### What to share back
 

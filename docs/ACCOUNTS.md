@@ -1,12 +1,12 @@
-# Parent accounts and private families
+# Host accounts and private families
 
-This build adds real server-backed parent accounts to the existing bilingual React/Vite app. It retains public games and the clearly labelled device-only practice Clubhouse.
+This build adds real server-backed host accounts to the existing bilingual React/Vite app. It retains public games and the clearly labelled device-only practice Clubhouse.
 
 ## Login and scope
 
 Sites provides **Sign in with ChatGPT**. The app uses normal top-level anchors to `/signin-with-chatgpt` and `/signout-with-chatgpt`, with a same-origin return path. It does not implement OAuth, collect passwords, simulate a production user, or use an email address as the durable user key. Sites dispatch supplies the verified, Site-scoped user ID. Every protected API operation checks that identity and the relevant family membership on the server.
 
-A parent can create a private family/group, rename it, change their display name, and switch among their own families. Children and guests remain player profiles inside the family and need no separate login. Family creation is bounded to ten spaces per parent. Role enforcement includes owner/editor/viewer on the server; this first UI creates an owner membership only. Inviting additional parent accounts is not implemented or presented as available.
+A parent can create a private family/group, rename it, change their display name, and switch among their own families. Children and guests remain player profiles inside the family and need no separate login. Family creation is bounded to ten spaces per parent. Role enforcement includes owner/editor/viewer on the server; this first UI creates an owner membership only. Inviting additional host accounts is not implemented or presented as available.
 
 Anonymous visitors can play and use the existing device-only Clubhouse. Its banner explicitly explains that anyone using that browser can open it. It is separate from the signed-in family's data. Signing in does not upload local profiles automatically: an empty family offers a backup preview and explicit import confirmation. The original device copy stays unchanged.
 

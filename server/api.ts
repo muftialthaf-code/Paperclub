@@ -11,7 +11,7 @@ export function identity(request:Request):Identity|null{
  const id=request.headers.get('oai-authenticated-user-id');if(!id||id.length>500)return null;
  const email=request.headers.get('oai-authenticated-user-email');let name=request.headers.get('oai-authenticated-user-full-name')||'';
  if(request.headers.get('oai-authenticated-user-full-name-encoding')==='percent-encoded-utf-8')try{name=decodeURIComponent(name)}catch{name=''}
- return{id,email,displayName:name.slice(0,80)||email?.split('@')[0]||'Parent'};
+ return{id,email,displayName:name.slice(0,80)||email?.split('@')[0]||'Host'};
 }
 const name=(value:unknown)=>{if(typeof value!=='string')return fail(400,'invalid_name');const n=value.normalize('NFC').trim();if(!n||n.length>80||/[\u0000-\u001f\u007f]/.test(n))return fail(400,'invalid_name');return n};
 async function payload(request:Request){if(!request.headers.get('content-type')?.toLowerCase().startsWith('application/json'))return fail(415,'json_required');const reader=request.body?.getReader();if(!reader)return fail(400,'invalid_request');const chunks:Uint8Array[]=[];let size=0;for(;;){const{done,value}=await reader.read();if(done)break;size+=value.byteLength;if(size>2_000_000){await reader.cancel();return fail(413,'data_too_large')}chunks.push(value)}const buffer=new Uint8Array(size);let offset=0;for(const chunk of chunks){buffer.set(chunk,offset);offset+=chunk.length}try{const data=JSON.parse(new TextDecoder().decode(buffer));if(!data||typeof data!=='object'||Array.isArray(data))return fail(400,'invalid_request');return data as Record<string,unknown>}catch{return fail(400,'invalid_request')}}

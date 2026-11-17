@@ -5,10 +5,14 @@ import{games,rules,generate,defaults}from'./engine';import{noPropsRules}from'./n
  * Account and certificate screens may still talk about a parent or guardian because that is who they are for.
  */
 const gameplayFiles=['src/engine.ts','src/main.tsx','src/NoPropsGame.tsx','src/noPropsCatalog.ts','src/newGames.ts','src/Scattergories.tsx','src/ExtraGamePrompt.tsx','src/business/venueMenu.ts'];
+const accountFiles=['src/FamilyAccounts.tsx','src/ParentLogin.tsx','src/i18n/accountCopy.ts','src/i18n/railwayCopy.ts'];
 const allowed=['Ages 5\\u201314 (and grown-ups)','ParentLogin','parent-note','parentId'];
 test('gameplay text never assumes the host is a parent',()=>{
  for(const file of gameplayFiles){const text=readFileSync(file,'utf8');const stripped=allowed.reduce((t,a)=>t.split(a).join(''),text);
   const hit=stripped.match(/.{0,40}\b(the parent|The parent|PARENT|Parent:|parent[ -]controlled|parent[ -]awarded|parent confirmed|grown-up)\b.{0,40}/);assert.equal(hit,null,`${file}: ${hit?.[0]}`)}
+});
+test('account screens call the account a host account in both languages',()=>{
+ for(const file of accountFiles){const text=readFileSync(file,'utf8');const hit=text.match(/.{0,30}\b([Pp]arent (sign|login|account|name|email)|PARENT ACCOUNT)|ولي الأمر|ولي أمر.{0,30}/);assert.equal(hit,null,`${file}: ${hit?.[0]}`)}
 });
 test('rules and generated instructions for every game avoid parent wording',()=>{
  for(const[id,steps]of Object.entries({...rules,...noPropsRules}))for(const step of steps)assert.doesNotMatch(step,/\bparent\b/i,`${id}: ${step}`);
