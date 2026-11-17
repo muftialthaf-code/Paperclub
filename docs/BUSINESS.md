@@ -39,9 +39,9 @@ Approved prompts are fetched only after guest access is verified. Eligible text 
 
 ## Daily codes and guest sessions
 
-Defaults: `Asia/Riyadh`, rotation from **06:00**, new code every **exact 24 hours**, guest sessions **120 minutes**. Rotation hour and session duration (15–240 minutes) are configurable per location. A fixed UTC anchor enforces the exact 24-hour requirement; daylight-saving regions can see their wall-clock hour shift at a seasonal clock change. Riyadh has no DST.
+Defaults: `Asia/Riyadh`, rotation from **06:00**, new code every **exact 24 hours**. The rotation hour is configurable per location. There is **no play-time limit**: a guest session lasts until the end of the daily code window it was opened in, so access is controlled only by the 24-hour code. (`session_minutes` remains in the database for compatibility but is ignored.) A fixed UTC anchor enforces the exact 24-hour requirement; daylight-saving regions can see their wall-clock hour shift at a seasonal clock change. Riyadh has no DST.
 
-Codes use eight random characters, a keyed verifier and encrypted dashboard retrieval. Code generation is atomic across concurrent requests. Codes are not placed in permanent QR links, analytics URLs or audit details. The dashboard shows the code, actual expiry and a server-relative countdown; it refreshes automatically. Refreshing an existing valid guest session does not grant extra time.
+Codes are six random digits (never all-identical or in sequence), with a keyed verifier and encrypted dashboard retrieval. Entries still accepted for a code created before this change (eight characters) end when the dashboard next reads the code, which re-issues it as six digits. Code generation is atomic across concurrent requests. Codes are not placed in permanent QR links, analytics URLs or audit details. Because six digits are easier to guess than eight characters, failed entries are limited per IP, and 300 failed entries across a location within 15 minutes **replace the daily code automatically** (audited as `code.auto_replaced`); guests already playing keep their sessions.
 
 Replacing a leaked code stops new entries with the old code. Existing guest sessions keep their original expiry, including across daily rotation. An explicit End all guest sessions action revokes them. Business suspension, location suspension or expired business access also prevents guest API access.
 
@@ -124,9 +124,19 @@ Each location chooses, per group, whether to **follow** the defaults (colours, l
 
 Guests see the optional promotional banner, the featured game and the venue's category chips on the library page; the existing search and filters remain. Categories only list games the venue has enabled.
 
-## Permanent QR identities
+## Permanent QR identity (one per venue)
 
-Each QR is a random 128-bit token resolved at `/q/<token>`. It redirects to the venue page and never contains the slug, so branding, links or domains can change without reprinting. A venue can have one whole-venue QR and many table QRs with names (`Table 4`); each can be disabled, re-enabled or replaced individually. Replaced codes stop working permanently. Scans are counted per code and day (aggregate only). A valid table token shows its table name on the venue page; a token from another location is ignored. Guests still need the daily code to play, and the original `/venue/<slug>` links keep working. Inactive businesses, unpublished locations and disabled codes show a neutral “not active” page that names no tenant. Organisation-level QR codes that list several branches were not built: a public branch picker would expose the branch list and needs a separate design.
+Every location gets **one** venue QR automatically when it is created (existing locations get theirs the first time a team member opens Codes & QR). The code is a random 128-bit token resolved at `/q/<token>`: it redirects to the venue page and never contains the slug, so branding, links or domains can change without reprinting. It can be disabled, re-enabled or replaced; a replaced code stops working permanently. Scans are counted per day (aggregate only). Guests still need the daily code to play. The original `/venue/<slug>` link keeps working for anything already printed. Inactive businesses, unpublished or suspended locations and disabled codes show a neutral "not active" page that names no tenant. A location must be **approved and published** before its QR opens. Table-level QR codes are no longer offered in the dashboard; the API still accepts and resolves them so nothing already printed breaks. Organisation-level QR codes that list several branches were not built (a public branch picker would expose the branch list).
+
+### Printable QR card
+
+The location's Codes & QR tab offers a bilingual card in A5 (table card) and A4 (poster): PNG at 300 DPI, a self-contained SVG, or the browser's print / save-as-PDF. It uses the venue logo (or the venue name set large), the venue's brand colours, a dark-on-white QR with a full quiet zone, and fixed English and Saudi Arabic copy. The daily code is never printed. The Arabic copy needs a native Najdi reader. Georgia is a system font and cannot be embedded; machines without it fall back to Times. Test a real print on both sizes and scan it from a metre away before printing many copies. `tests/qr-card-browser.ts` checks 24 card variants, decodes the exported QR (dev dependency `jsqr`) and exercises the dashboard.
+
+## Logo, colours and menu
+
+Uploading a logo saves it to the draft immediately and **chooses the brand colour and a soft background from the logo** (the dominant saturated colour, darkened until it meets the same contrast rules the server enforces; neutral logos fall back to a dark slate). The colours stay editable. The guest page shows the logo centred at the top, above the venue name and welcome message.
+
+Venues enter their **menu** as drinks, food and desserts (one item per line, optional Arabic name after a vertical bar). The menu is part of the branding draft, so it is reviewed and published with it. Guests meet the items mixed into Would You Rather and Take a Side (pairs of the same kind), the 5-Second Challenge (ingredients), Table Topics, Convince Us, Don't Say Yes or No, Word Association, Rapid Fire, Categories Countdown, Doodle Detective and Speed Drawing, about three prompts in ten while a menu exists, never repeating within a session. Menu words stay in the guest's browser memory only. Opposite Answers is not personalised because it needs verified correct answers.
 
 ## Consolidated reports
 

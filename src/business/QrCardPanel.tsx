@@ -1,0 +1,17 @@
+import React,{useEffect,useState}from'react';import{Download,Printer}from'lucide-react';
+import{b,useBusinessLocale}from'./api';import type{VenueLocation}from'./types';
+import{buildCardSvg,renderCardPng,printCard,loadCardFonts,loadCardLogo,type CardSize}from'./qrCard';
+function save(name:string,blob:Blob){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
+/** Preview and downloads for the printable bilingual card. The card itself never shows the QR's enabled or disabled state. */
+export default function QrCardPanel({location:l,url,fileBase,disabled}:{location:VenueLocation,url:string,fileBase:string,disabled:boolean}){useBusinessLocale();
+ const brand=l.published||l.draft,[size,setSize]=useState<CardSize>('a5'),[svg,setSvg]=useState(''),[preview,setPreview]=useState(''),[busy,setBusy]=useState(false),[error,setError]=useState('');
+ useEffect(()=>{let live=true;setSvg('');void(async()=>{try{const[fonts,logo]=await Promise.all([loadCardFonts(),loadCardLogo(brand.logoId)]);if(live)setSvg(buildCardSvg({name:brand.displayName,primary:brand.primary,background:brand.background,url,logo,fonts},size))}catch{if(live)setError(b('The card could not be prepared. Try again.','ما قدرنا نجهّز البطاقة. جرّب مرة ثانية.'))}})();return()=>{live=false}},[brand.displayName,brand.primary,brand.background,brand.logoId,url,size]);
+ useEffect(()=>{if(!svg){setPreview('');return}const u=URL.createObjectURL(new Blob([svg],{type:'image/svg+xml'}));setPreview(u);return()=>URL.revokeObjectURL(u)},[svg]);
+ const file=fileBase+'-card-'+size;
+ async function png(){setBusy(true);setError('');try{save(file+'.png',await renderCardPng(svg,size))}catch{setError(b('The PNG could not be created in this browser. Download the SVG instead.','ما قدرنا ننشئ PNG في هالمتصفح. نزّل ملف SVG بدلاً منه.'))}setBusy(false)}
+ return <div className="business-card-tools" aria-live="polite">
+  <div className="business-card-sizes" role="group" aria-label={b('Card size','حجم البطاقة')}><button type="button" className={size==='a5'?'active':''} aria-pressed={size==='a5'} onClick={()=>setSize('a5')}>{b('A5 table card','بطاقة طاولة A5')}</button><button type="button" className={size==='a4'?'active':''} aria-pressed={size==='a4'} onClick={()=>setSize('a4')}>{b('A4 poster','ملصق A4')}</button></div>
+  <div className={'business-card-preview'+(disabled?' off':'')}>{preview?<img src={preview} alt={b('Preview of the printable bilingual card','معاينة البطاقة المطبوعة باللغتين')}/>:<p className="small" role="status">{b('Preparing the card…','جاري تجهيز البطاقة…')}</p>}</div>
+  <div className="actions"><button className="secondary" disabled={!svg||busy} onClick={()=>void png()}><Download size={16}/>{b('Card PNG (300 DPI)','البطاقة PNG (300 DPI)')}</button><button className="secondary" disabled={!svg||busy} onClick={()=>save(file+'.svg',new Blob([svg],{type:'image/svg+xml'}))}><Download size={16}/>{b('Card SVG','البطاقة SVG')}</button><button className="secondary" disabled={!svg||busy} onClick={()=>void printCard(svg,size)}><Printer size={16}/>{b('Print or save as PDF','طباعة أو حفظ PDF')}</button></div>
+  <p className="small">{b('Print at 100% (actual size) with no margins. The QR prints about 6 cm wide. The card never shows the daily code; give that to guests in person.','اطبع بحجم 100% (الحجم الفعلي) بدون هوامش. رمز QR يطلع بعرض حوالي 6 سم. البطاقة ما تعرض رمز اليوم؛ اعطه للضيوف مباشرة.')}</p>
+  {error&&<p role="alert" className="feedback">{error}</p>}</div>}

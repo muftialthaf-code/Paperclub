@@ -69,3 +69,24 @@ details.business-card[open]>summary{margin-bottom:6px}
 .business-card summary{font-size:15px;min-height:44px;padding-block:8px}
 .business-card h2{font-size:26px}
 @media(max-width:700px){.business-card{padding:20px 16px;border-radius:14px}details.business-card{padding:4px 16px}}
+.business-unpublished{border-inline-start:4px solid var(--coral,#bc4d3a);background:#fff4ef}
+/* Guest header: logo and venue name centred at the top of the screen. */
+.venue-heading{flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:14px;padding:46px 20px 22px;padding-inline-end:20px;border-bottom:0}
+.venue-logo{display:block;width:auto;height:auto;max-height:112px;max-width:min(260px,70vw);object-fit:contain}
+.venue-title{display:grid;gap:6px;justify-items:center}.venue-title h1{margin:0}.venue-welcome{margin:0;max-width:38ch}
+.venue-code-input{letter-spacing:.2em}
+.business-menu{border:0;padding:0;margin:14px 0}.business-menu legend{font-weight:700;font-size:1.05em;padding:0}
+
+/* Printable card: size switch, preview and disabled state */
+.business-card-tools{margin-top:18px;display:grid;gap:14px}
+.business-card-sizes{display:inline-flex;gap:6px;flex-wrap:wrap}
+.business-card-sizes button{min-height:44px;padding:8px 16px;border:1px solid #cfd7e3;border-radius:999px;background:#fff;font-size:14px;font-weight:600;color:#24365b}
+.business-card-sizes button.active{background:#24365b;border-color:#24365b;color:#fff}
+.business-card-preview{display:grid;place-items:center;padding:20px;border:1px solid #dcded2;border-radius:14px;background:repeating-linear-gradient(45deg,#f4f3ee 0 10px,#f9f8f4 10px 20px)}
+.business-card-preview img{display:block;width:min(100%,340px);height:auto;border-radius:6px;box-shadow:0 10px 30px #24365b26}
+.business-card-preview.off img{filter:grayscale(1);opacity:.6}
+.business-card-preview.off{position:relative}
+.business-card-preview.off::after{content:"";position:absolute;inset:0;border-radius:14px;box-shadow:inset 0 0 0 2px #b3261e}
+.business-qr-item.disabled{border-style:dashed}
+.business-qr-off{background:#fde8e6!important;color:#7a1710!important;border:1px solid #f0b4ae;border-radius:10px;padding:12px 14px!important}
+@media(min-width:900px){.business-card-tools{grid-template-columns:minmax(260px,380px) minmax(0,1fr);column-gap:28px;align-items:start}.business-card-tools>.business-card-preview{grid-column:1;grid-row:1/span 4}.business-card-tools>*:not(.business-card-preview){grid-column:2}}

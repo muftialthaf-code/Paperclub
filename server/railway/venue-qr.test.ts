@@ -28,7 +28,7 @@ test('permanent QR identities: opaque tokens, table labels, scan counts, disable
   await status('publish B',req('/locations/'+LB+'/publish','POST',{revision:0},owner),200);
   // creation rules
   await status('invalid kind',req('/locations/'+L1+'/qr','POST',{kind:'room'},A),400);await status('table needs a label',req('/locations/'+L1+'/qr','POST',{kind:'table'},A),400);
-  const venueQr=await json(await status('location qr',req('/locations/'+L1+'/qr','POST',{kind:'location'},A),201));assert.match(venueQr.token,/^[A-Za-z0-9_-]{22}$/);
+  const autoList=(await json(await req('/locations/'+L1+'/qr','GET',undefined,A))).codes;assert.equal(autoList.length,1,'every location starts with exactly one venue QR');const venueQr={id:autoList[0].id,token:autoList[0].token};assert.match(venueQr.token,/^[A-Za-z0-9_-]{22}$/);assert.equal(autoList[0].kind,'location');
   await status('only one location qr',req('/locations/'+L1+'/qr','POST',{kind:'location'},A),409);
   const t4=await json(await status('table 4',req('/locations/'+L1+'/qr','POST',{kind:'table',label:'Table 4'},A),201));await status('duplicate label',req('/locations/'+L1+'/qr','POST',{kind:'table',label:'table 4'},A),409);
   const t5=await json(await status('scoped manager makes a table',req('/locations/'+L1+'/qr','POST',{kind:'table',label:'Table 5'},smgr),201));
@@ -53,6 +53,10 @@ test('permanent QR identities: opaque tokens, table labels, scan counts, disable
   const fresh=await json(await status('regenerate',req('/qr/'+t5.id+'/regenerate','POST',{},A),201));assert.notEqual(fresh.token,t5.token);assert.equal((await scan(t5.token)).status,404);assert.equal((await scan(fresh.token)).status,302);
   await status('replaced code cannot be revived',req('/qr/'+t5.id,'PATCH',{status:'active'},A),409);await status('replaced code cannot be regenerated again',req('/qr/'+t5.id+'/regenerate','POST',{},A),409);
   assert.equal((await json(await req('/locations/'+L1+'/qr','GET',undefined,A))).codes.length,3,'replaced codes leave the active list');
+  // a QR created before the location is published shows the neutral page until the owner approves and publishes it
+  const L3=await loc(bizA.id,'qr-three',A);const draftQr=(await json(await req('/locations/'+L3+'/qr','GET',undefined,A))).codes[0];
+  assert.equal((await scan(draftQr.token)).status,404,'an unpublished location must not open from its QR');
+  await status('publish L3',req('/locations/'+L3+'/publish','POST',{revision:0},owner),200);assert.equal((await scan(draftQr.token)).status,302,'the same QR works as soon as the location is published');
   // tenant and lifecycle gates
   await status('suspend business',req('/businesses/'+bizA.id,'PATCH',{status:'suspended'},owner),200);assert.equal((await scan(fresh.token)).status,404);assert.equal((await scan(t4.token)).status,404);
   await status('inactive business cannot create QR',req('/locations/'+L1+'/qr','POST',{kind:'table',label:'Table 9'},A),403);
