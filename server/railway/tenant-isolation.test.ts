@@ -45,7 +45,7 @@ test('tenant isolation matrix: another business is refused on every management e
   await status('B cannot publish',req('/locations/'+L1+'/publish','POST',{revision:0},B),403);await status('B cannot approve prompts',req('/prompts/'+prompt,'PATCH',{status:'approved'},B),403);await status('B cannot publish defaults',req('/businesses/'+bizA.id+'/defaults/publish','POST',{revision:0},B),403);
   await status('B cannot use A invitation',req('/invitations/accept','POST',{token:new URL(openInvite.url).hash.slice(1)},B),404);
   // nothing was changed by the attempts, and A still has full access
-  const a=await json(await req('/businesses/'+bizA.id,'GET',undefined,A));assert.equal(a.business.name,'Chain A');assert.equal(a.locations.length,1);assert.equal((await json(await req('/locations/'+L1+'/prompts','GET',undefined,A))).prompts.length,1);assert.equal((await json(await req('/locations/'+L1+'/qr','GET',undefined,A))).codes.length,1);
+  const a=await json(await req('/businesses/'+bizA.id,'GET',undefined,A));assert.equal(a.business.name,'Chain A');assert.equal(a.locations.length,1);assert.equal((await json(await req('/locations/'+L1+'/prompts','GET',undefined,A))).prompts.length,1);assert.equal((await json(await req('/locations/'+L1+'/qr','GET',undefined,A))).codes.length,2,'the automatic venue QR plus the one made in the test');
   assert.equal((await pool.query('SELECT COUNT(*)::int AS n FROM business_memberships WHERE business_id=$1',[bizA.id])).rows[0].n,2);
   // guest-facing resources of an unpublished or other tenant never leak
   await status('unpublished venue is not public',raw('/api/venue/iso-a'),404);await status('nonsense slug',raw('/api/venue/nonexistent-slug'),404);

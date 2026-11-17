@@ -11,6 +11,29 @@ export const email=(v:unknown)=>{const s=text(v,254).toLowerCase();if(!/^[^\s@]+
 export const iso=(value:Date|string)=>new Date(value).toISOString();
 export const blankBrand=(name:string):VenueBrand=>({displayName:name,welcomeEn:'Make room for a little play.',welcomeAr:'حيّاكم، خلّونا نلعب مع بعض.',primary:'#24365b',background:'#faf9f6',logoId:null,games:games.filter(g=>g.collection==='none').map(g=>g.id)});
 function luminance(hex:string){const rgb=hex.slice(1).match(/../g)!.map(n=>parseInt(n,16)/255).map(n=>n<=.04045?n/12.92:((n+.055)/1.055)**2.4);return .2126*rgb[0]+.7152*rgb[1]+.0722*rgb[2]}
+
+function rgbToHsl(r:number,g:number,b:number){r/=255;g/=255;b/=255;const max=Math.max(r,g,b),min=Math.min(r,g,b),l=(max+min)/2;let h=0,sat=0;if(max!==min){const d=max-min;sat=l>.5?d/(2-max-min):d/(max+min);h=max===r?((g-b)/d+(g<b?6:0)):max===g?(b-r)/d+2:(r-g)/d+4;h*=60}return[h,sat,l]}
+function hslToHex(h:number,s:number,l:number){const f=(n:number)=>{const k=(n+h/30)%12,a=s*Math.min(l,1-l);return Math.round(255*(l-a*Math.max(-1,Math.min(k-3,9-k,1))))};return'#'+[f(0),f(8),f(4)].map(v=>v.toString(16).padStart(2,'0')).join('')}
+const hexLuminance=(hex:string)=>luminance(hex);
+const contrastOk=(primary:string,background:string)=>{const a=hexLuminance(primary),b=hexLuminance(background);return luminance(background)>=.7&&(Math.max(a,b)+.05)/(Math.min(a,b)+.05)>=4.5&&1.05/(a+.05)>=4.5};
+/**
+ * Choose a readable brand colour and a soft matching background from the pixels of an uploaded logo (RGBA, row after row).
+ * Prefers the most common saturated hue; falls back to the darkest common neutral. The result always satisfies the same contrast rules as `brand()`.
+ */
+export function paletteFromPixels(rgba:ArrayLike<number>):{primary:string,background:string}{
+ const buckets=new Map<number,{n:number,r:number,g:number,b:number,s:number}>();let neutralN=0,nr=0,ng=0,nb=0;
+ for(let i=0;i+3<rgba.length;i+=4){const a=rgba[i+3];if(a<128)continue;const r=rgba[i],g=rgba[i+1],b=rgba[i+2];const[h,sat,l]=rgbToHsl(r,g,b);if(l>.93)continue;
+  if(sat>=.25&&l>=.12&&l<=.88){const key=Math.floor(h/20);const e=buckets.get(key)||{n:0,r:0,g:0,b:0,s:0};e.n++;e.r+=r;e.g+=g;e.b+=b;e.s+=sat;buckets.set(key,e)}else{neutralN++;nr+=r;ng+=g;nb+=b}}
+ let hue=215,sat=.45,hasColour=false,total=0;for(const e of buckets.values())total+=e.n;
+ let best:{n:number,r:number,g:number,b:number,s:number}|null=null;for(const e of buckets.values())if(!best||e.n>best.n)best=e;
+ if(best&&best.n>=Math.max(3,(total+neutralN)*.08)){const[h,s]=rgbToHsl(best.r/best.n,best.g/best.n,best.b/best.n);hue=h;sat=Math.min(.85,Math.max(.35,s));hasColour=true}
+ else if(neutralN>0){const[,,l]=rgbToHsl(nr/neutralN,ng/neutralN,nb/neutralN);hue=215;sat=.12;void l}
+ const background=hslToHex(hue,hasColour?.5:.12,.96);let lightness=hasColour?.4:.2;let primary=hslToHex(hue,sat,lightness);
+ for(let i=0;i<40&&!contrastOk(primary,background);i++){lightness=Math.max(.08,lightness-.02);primary=hslToHex(hue,sat,lightness)}
+ return contrastOk(primary,background)?{primary,background}:{primary:'#24365b',background:'#faf9f6'};
+}
+export type MenuItem={kind:'drink'|'food'|'dessert',en:string,ar:string};
+function menuOf(v:any):MenuItem[]{if(v===undefined||v===null)return[];if(!Array.isArray(v)||v.length>60)return fail(400,'invalid_menu');const seen=new Set<string>();return v.map((x:any)=>{if(!x||typeof x!=='object'||!['drink','food','dessert'].includes(x.kind))return fail(400,'invalid_menu');const en=typeof x.en==='string'&&x.en.trim()?text(x.en,40):'',ar=typeof x.ar==='string'&&x.ar.trim()?text(x.ar,40):'';if(!en&&!ar)return fail(400,'invalid_menu');return{kind:x.kind,en,ar} as MenuItem}).filter(x=>{const k=x.kind+'|'+x.en.toLowerCase()+'|'+x.ar;if(seen.has(k))return false;seen.add(k);return true})}
 export const INHERITABLE=['primary','background','logoId','welcomeEn','welcomeAr','games','featured','categories','promo'] as const;
 export type Inherit=Partial<Record<typeof INHERITABLE[number],boolean>>;
 export function inheritFlags(v:unknown):Inherit{if(v===undefined||v===null)return{};if(typeof v!=='object'||Array.isArray(v))return fail(400,'invalid_inherit');const out:Inherit={};for(const[k,flag]of Object.entries(v as Record<string,unknown>)){if(!(INHERITABLE as readonly string[]).includes(k)||typeof flag!=='boolean')return fail(400,'invalid_inherit');if(flag)(out as any)[k]=true}return out}
@@ -22,7 +45,7 @@ function layout(v:any,gameIds:string[]){
  let promo=null as null|{en:string,ar:string};if(v.promo&&(v.promo.en||v.promo.ar)){promo={en:text(v.promo.en,120),ar:text(v.promo.ar,120)}}
  return{featured,categories,promo};
 }
-export function brand(v:any):VenueBrand{if(!v||typeof v!=='object')return fail(400,'invalid_brand');const color=(s:unknown)=>typeof s==='string'&&/^#[0-9a-f]{6}$/i.test(s)?s:fail(400,'invalid_colour');const primary=color(v.primary),background=color(v.background);if(luminance(background)<.7)fail(400,'colour_contrast');if((Math.max(luminance(primary),luminance(background))+.05)/(Math.min(luminance(primary),luminance(background))+.05)<4.5||1.05/(luminance(primary)+.05)<4.5)return fail(400,'colour_contrast');if(!Array.isArray(v.games)||v.games.length<1||v.games.length>24||new Set(v.games).size!==v.games.length||v.games.some((id:unknown)=>!games.some(g=>g.id===id)))return fail(400,'invalid_games');return{displayName:text(v.displayName),welcomeEn:text(v.welcomeEn,300),welcomeAr:text(v.welcomeAr,300),primary,background,logoId:v.logoId?identifier(v.logoId):null,games:v.games,...layout(v,v.games)}}
+export function brand(v:any):VenueBrand{if(!v||typeof v!=='object')return fail(400,'invalid_brand');const color=(s:unknown)=>typeof s==='string'&&/^#[0-9a-f]{6}$/i.test(s)?s:fail(400,'invalid_colour');const primary=color(v.primary),background=color(v.background);if(luminance(background)<.7)fail(400,'colour_contrast');if((Math.max(luminance(primary),luminance(background))+.05)/(Math.min(luminance(primary),luminance(background))+.05)<4.5||1.05/(luminance(primary)+.05)<4.5)return fail(400,'colour_contrast');if(!Array.isArray(v.games)||v.games.length<1||v.games.length>24||new Set(v.games).size!==v.games.length||v.games.some((id:unknown)=>!games.some(g=>g.id===id)))return fail(400,'invalid_games');return{displayName:text(v.displayName),welcomeEn:text(v.welcomeEn,300),welcomeAr:text(v.welcomeAr,300),primary,background,logoId:v.logoId?identifier(v.logoId):null,games:v.games,...layout(v,v.games),menu:menuOf(v.menu)}}
 /** Organisation defaults are a complete brand without a branch name. */
 export function defaultsBrand(v:any):Omit<VenueBrand,'displayName'>{const {displayName:_,...rest}=brand({...v,displayName:'Organisation'});return rest}
 /** Resolve what guests see: a branch's own published brand with any inherited fields replaced by the organisation's published defaults. */

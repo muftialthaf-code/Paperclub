@@ -1,4 +1,5 @@
 import{themedDrawingWords}from'./business/venueContent';
+import{menuDrawingWords}from'./business/venueMenu';
 import{adultRolesMore,adultActionsMore,drawingExtras,funnyAnimals,funnyActions,comboAdjectives,comboObjects}from'./content/drawingExpansion';
 import {isArabic} from './i18n/locale';
 import {arabicDrawingPool} from './arabic/common';
@@ -66,6 +67,8 @@ export function createSpeedRound(previous?: SpeedRound, difficulty = previous?.d
     }
     items.push(remaining.splice(index, 1)[0]);
   }
+  // Venue menu: a couple of the guest's own menu items join each round (never the adult scenes).
+  if(difficulty!=='Hard'){const menuWords=menuDrawingWords().filter(word=>!previousWords.has(word)&&!items.includes(word));for(let i=0;i<Math.min(2,menuWords.length);i++){const word=menuWords.splice(Math.floor(Math.random()*menuWords.length),1)[0];items[Math.floor(Math.random()*items.length)]=word;if(new Set(items).size!==items.length){items.splice(0,items.length,...new Set(items));while(items.length<16){const spare=pool.find(w=>!items.includes(w)&&!previousWords.has(w));if(!spare)break;items.push(spare)}}}}
   const selections = previous?.selections || [];
   // Treat a selection as a set: merely shuffling the same 16 is never a new round.
   while (selections.includes(signature(items))) {

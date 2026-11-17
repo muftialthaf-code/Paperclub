@@ -1,5 +1,6 @@
+export type MenuItem={kind:'drink'|'food'|'dessert',en:string,ar:string};
 export type VenueCategory={id:string,en:string,ar:string,games:string[]};
-export type VenueBrand={displayName:string,welcomeEn:string,welcomeAr:string,primary:string,background:string,logoId:string|null,games:string[],featured?:string|null,categories?:VenueCategory[],promo?:{en:string,ar:string}|null};
+export type VenueBrand={displayName:string,welcomeEn:string,welcomeAr:string,primary:string,background:string,logoId:string|null,games:string[],featured?:string|null,categories?:VenueCategory[],promo?:{en:string,ar:string}|null,menu?:MenuItem[]};
 export type BrandDefaults=Omit<VenueBrand,'displayName'>;
 export type InheritFlags=Partial<Record<'primary'|'background'|'logoId'|'welcomeEn'|'welcomeAr'|'games'|'featured'|'categories'|'promo',boolean>>;
 export type VenuePrompt={id:string,gameId:string,locale:'en'|'ar-SA',difficulty:'Easy'|'Medium'|'Hard',text:string,status:'pending'|'approved'|'rejected'};

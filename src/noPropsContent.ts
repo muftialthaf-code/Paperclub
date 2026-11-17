@@ -1,4 +1,5 @@
 import{themedPrompt}from'./business/venueContent';
+import{menuSpoken}from'./business/venueMenu';
 import{yesNoExpansion}from'./content/yesnoExpansion';
 import{topics as topicsExpansion,convince as convinceExpansion,scenario as scenarioExpansion,truths as truthsExpansion,opposites as oppositesExpansion}from'./content/spokenExpansion';
 import{easyCategories,mediumCategories,hardCategories}from'./content/categoryExpansion';
@@ -58,6 +59,7 @@ function combinations(game:string,level:string,count:number,history:string[]):Sp
  return {key,text:'Tell a story using every word.',words};
 }
 export function spokenPrompt(game:string,level:string,history:string[],hardWords=5):SpokenPrompt{const themed=themedPrompt(game,level,history);if(themed)return themed;
+ const menu=menuSpoken(game,level,history);if(menu)return menu;
  if(isArabic())return arabicSpoken(game,level,history,hardWords);
  const difficulty=['Easy','Medium','Hard'].includes(level)?level:'Medium';
  if(game==='np-story60')return combinations(game,difficulty,difficulty==='Hard'?hardWords:3,history);

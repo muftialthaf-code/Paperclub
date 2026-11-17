@@ -57,3 +57,9 @@
 .venue-table-chip{display:inline-block;margin:0 0 6px;padding:4px 12px;border-radius:999px;background:var(--venue-primary,#24365b);color:#fff;font-weight:700}
 .business-table-wrap{overflow-x:auto}.business-table{width:100%;border-collapse:collapse;min-width:520px}.business-table th,.business-table td{padding:8px 10px;border-bottom:1px solid #e3dccd;text-align:end}.business-table th:first-child,.business-table td:first-child{text-align:start}.business-table tfoot th,.business-table tfoot td{font-weight:700;border-top:2px solid #cfc6b3}.business-top-games{margin:6px 0 10px;padding-inline-start:20px}
 .business-unpublished{border-inline-start:4px solid var(--coral,#bc4d3a);background:#fff4ef}
+/* Guest header: logo and venue name centred at the top of the screen. */
+.venue-heading{flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:14px;padding:46px 20px 22px;padding-inline-end:20px;border-bottom:0}
+.venue-logo{display:block;width:auto;height:auto;max-height:112px;max-width:min(260px,70vw);object-fit:contain}
+.venue-title{display:grid;gap:6px;justify-items:center}.venue-title h1{margin:0}.venue-welcome{margin:0;max-width:38ch}
+.venue-code-input{letter-spacing:.2em}
+.business-menu{border:0;padding:0;margin:14px 0}.business-menu legend{font-weight:700;font-size:1.05em;padding:0}

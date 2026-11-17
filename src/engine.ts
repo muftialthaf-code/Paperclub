@@ -1,4 +1,5 @@
 import{themedPrompt}from'./business/venueContent';
+import{menuChallenge}from'./business/venueMenu';
 import{drawingCategories}from'./drawingDeck';
 import{easyCategories,mediumCategories}from'./content/categoryExpansion';
 import {isArabic} from './i18n/locale';
@@ -36,7 +37,7 @@ const actions=['riding a bicycle','ordering a coffee','conducting an orchestra',
 const locations=['under the sea','in a tiny kitchen','on a cloud','at the North Pole','inside a volcano','on a pirate ship','in a magical forest','at a birthday party','on Mars','in a floating castle'];
 export const drawingSizes={animals:animals.length,easyActions:easyActions.length,actions:actions.length,detectiveEasy:detectiveEasy.length,detectiveMedium:detectiveMedium.length};
 export type Challenge={key?:string,from?:string,to?:string,minimum?:number,steps?:number,optionA?:string,optionB?:string,category?:string,text:string,answer?:string,hint?:string,instruction:string};
-export function generate(id:string,s:Settings,history:string[]=[]):Challenge {const themed=themedPrompt(id,s.difficulty,history);if(themed)return{...themed,instruction:isArabic()?'ارسموا على الورق وشاركوا أفكاركم.':'Draw on paper and share your ideas.'};if(isArabic())return arabicGenerate(id,s,history);if(newGameIds.includes(id))return newGameChallenge(id,s,history);let c:Challenge={text:'',instruction:''};const hard=s.difficulty==='Hard';const easy=s.difficulty==='Easy';
+export function generate(id:string,s:Settings,history:string[]=[]):Challenge {const themed=themedPrompt(id,s.difficulty,history);if(themed)return{...themed,instruction:isArabic()?'ارسموا على الورق وشاركوا أفكاركم.':'Draw on paper and share your ideas.'};const menu=menuChallenge(id,s.difficulty,history);if(menu)return menu as Challenge;if(isArabic())return arabicGenerate(id,s,history);if(newGameIds.includes(id))return newGameChallenge(id,s,history);let c:Challenge={text:'',instruction:''};const hard=s.difficulty==='Hard';const easy=s.difficulty==='Easy';
 for(let attempt=0;attempt<500;attempt++){
 if(id==='speed'){c={text:pick(hard?adultConcepts:[...animals,...objects]),instruction:'Read this item aloud. Everyone draws it in order on their own paper.'};}
 if(hard&&id==='impossible')c=adultDrawing();
