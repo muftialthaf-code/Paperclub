@@ -39,6 +39,7 @@
     "drizzle-kit": "0.31.10",
     "esbuild": "^0.25.12",
     "jsdom": "^31.0.0",
+    "jsqr": "1.4.0",
     "playwright": "^1.65.1",
     "tailwindcss": "^4.0.0",
     "tsx": "^4.19.0",
