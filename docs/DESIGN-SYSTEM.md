@@ -33,6 +33,19 @@ Breakpoints already in use: 1450, 1050/1000, 900, 700/650 and 360 px. Mobile is 
 6. **No decorative controls.** A button, toggle or setting must do something real. Do not add placeholder UI.
 7. **Children first.** Plain language, large targets, no dark patterns, no countdown pressure outside actual game timers.
 
+## Printable venue card (QR card)
+
+Venues print this and put it on every table, so it is the product's sales pitch. Code: `src/business/qrCard.ts` (generator), `src/business/QrCardPanel.tsx` (preview and downloads), shown inside `QrItem` in `LocationPanel.tsx`. Test: `tests/qr-card-browser.ts`.
+
+- **Sizes:** A5 portrait (table card, 148 × 210 mm) and A4 portrait (poster). One layout drawn in millimetres on an A5 canvas and scaled for A4. The colour card sits 4 mm inside a white page, so a home printer's unprintable edge never cuts the design; all content is at least 8 mm from the paper edge.
+- **Venue brand leads:** `primary` and `background` from the published brand (else the draft), the logo when there is one (fetched with the dashboard session and embedded as a data URL), otherwise the venue name set large in Georgia. Arabic names switch to Tajawal bold and right-to-left. Never hard-code a venue's colours or name.
+- **The QR is sacred:** dark modules (`#111827`) on a flat white panel with a 4-module quiet zone, error correction Q, drawn as vector paths, at least 4 cm wide on A5 (about 5.6 cm in practice). No gradient, tint, logo or doodle ever touches the panel. It encodes `location.origin + '/q/' + token`.
+- **Copy:** fixed, bilingual, equal prominence. Headline "Make room for play." / "خلّونا نلعب مع بعض." and three steps (scan, ask the team for today's six-digit code, play together, no app, no account). Each language has its own direction. It never prints the daily code and makes no price, prize or data claims. The Arabic needs a native reader's review.
+- **Playful cues, restrained:** a hand-drawn underline, four-point sparkles, a dashed paper-cut frame and the Paperclub asterisk. They use coral when it has 3:1 contrast on the venue background, otherwise the venue's primary colour.
+- **Type:** nothing below 9 pt at A5 (3.2 mm). Georgia for headings, Arial for body, Tajawal for Arabic. Tajawal is embedded in the SVG so the PNG export renders with the real shapes.
+- **Downloads:** self-contained SVG (fonts and logo embedded, no external references), PNG at 300 DPI (1748 × 2480 px A5, 2480 × 3508 px A4, stamped with 300 DPI metadata), and a browser "Print or save as PDF" action at exact paper size.
+- **Disabled QR:** a red warning and a greyed, outlined preview in the dashboard. The card itself never shows the state.
+
 ## Where things live
 
 | Area | Files |
@@ -40,7 +53,7 @@ Breakpoints already in use: 1450, 1050/1000, 900, 700/650 and 360 px. Mobile is 
 | Global styles and tokens | `src/style.css` |
 | Business, admin and venue styles | `src/business/business.css` |
 | Guest venue experience | `src/business/VenueExperience.tsx`, `VenueHome.tsx` |
-| Vendor dashboard | `src/business/BusinessApp.tsx`, `LocationPanel.tsx`, `DefaultsPanel.tsx`, `ChainReport.tsx`, `LayoutEditor.tsx` |
+| Vendor dashboard | `src/business/BusinessApp.tsx`, `QrCardPanel.tsx`, `qrCard.ts`, `LocationPanel.tsx`, `DefaultsPanel.tsx`, `ChainReport.tsx`, `LayoutEditor.tsx` |
 | Games and setup screens | `src/main.tsx`, `NoPropsSetup.tsx`, `NoPropsGame.tsx`, `Scattergories.tsx`, `SpeedDrawing.tsx` |
 | Clubhouse and accounts | `src/Clubhouse.tsx`, `FamilyAccounts.tsx`, `ParentLogin.tsx` |
 | Translations | `src/i18n/uiPairs.ts`, `src/i18n/translate.ts` |
