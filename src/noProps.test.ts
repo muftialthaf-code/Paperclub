@@ -1,7 +1,7 @@
 import test from'node:test';import assert from'node:assert/strict';import{games,rules}from'./engine';import{noPropsGames}from'./noPropsCatalog';import{spokenPrompt,spokenLibraryCounts}from'./noPropsContent';
 import{noPropsDefaults,createNoPropsGame,startNoPropsTimer,pauseNoPropsTimer,resetNoPropsTimer,expireNoPropsTimer,noPropsRemaining,noPropsDecision,nextSpokenQuestion,associationTurn,nextYesNoQuestion,noPropsPoint}from'./noPropsEngine';import{resultSeed}from'./resultBridge';
-test('exactly thirteen original games and eleven new games appear once in their collections',()=>{
- const old=['speed','detective','battle','impossible','story','code','five','escape','scatter','ladder','anagram','invent','rather'];assert.deepEqual(games.filter(g=>g.collection==='paper').map(g=>g.id).sort(),old.sort());assert.equal(games.filter(g=>g.collection==='none').length,11);assert.equal(games.length,24);assert.equal(new Set(games.map(g=>g.id)).size,24);noPropsGames.forEach(g=>assert(rules[g.id].length>=3));
+test('exactly thirteen original games and thirteen no-props games appear once in their collections',()=>{
+ const old=['speed','detective','battle','impossible','story','code','five','escape','scatter','ladder','anagram','invent','rather'];assert.deepEqual(games.filter(g=>g.collection==='paper').map(g=>g.id).sort(),old.sort());assert.equal(games.filter(g=>g.collection==='none').length,13);assert.equal(games.length,26);assert.equal(new Set(games.map(g=>g.id)).size,26);noPropsGames.forEach(g=>assert(rules[g.id].length>=3));
 });
 test('every content game has varied prompts at each level and does not repeat the first twenty',()=>{
  for(const g of noPropsGames)for(const difficulty of ['Easy','Medium','Hard']){

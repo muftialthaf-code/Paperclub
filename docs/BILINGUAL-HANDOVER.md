@@ -43,7 +43,7 @@ The implementation includes these reproducible checks:
 
 - `npm test`: **59 tests passed**, including existing English engine tests plus Arabic ciphers, dictionary paths, exact anagram tile multisets, duplicates, pool sizes, non-repetition, category witnesses, shared timer behaviour, Arabic SVG/mailto output and mixed-script technical symbols.
 - 500 Arabic escape adventures per difficulty (1,500 total), answers recomputed independently; the ordering puzzle is exhaustively checked for a unique solution.
-- `node tests/bilingual.mjs`: all 24 games × three levels × two languages (144 launches), interface/rules/setup, timer controls, manual scores, hidden answers, result screens and Clubhouse navigation; zero missing catalogue entries on exercised paths.
+- `node tests/bilingual.mjs`: all 26 games × three levels × two languages (156 launches), interface/rules/setup, timer controls, manual scores, hidden answers, result screens and Clubhouse navigation; zero missing catalogue entries on exercised paths.
 - `node tests/bilingual-sessions.mjs`: cancel/confirm language change, exact paused times, storage failure, independent English/Arabic session identity, refresh, Arabic title search, literal mixed-language profile names and Arabic awards/certificates.
 - Existing journeys, adult games, spoken games, four added paper games, Scattergories, Clubhouse, result assignment, timer buzzer, back navigation and offline regression scripts.
 - `npx tsx scripts/check-ui.ts`: all literal render-catalogue entries resolved.
