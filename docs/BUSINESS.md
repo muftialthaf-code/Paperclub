@@ -156,3 +156,12 @@ Isolation is enforced in the API on every request (membership, role, location sc
 - **Café picks.** `src/business/cafePicks.ts` lists the quick, talk-and-laugh games that need no pens or paper: Would You Rather, 5 Second Challenge, Table Topics, Don't Say Yes or No, Take a Side, Two Truths and a Lie, Rapid Fire, Opposite Answers, Categories Countdown, Word Association and What Would You Do. New locations start with this list.
 - **Presets.** In the location's game list, **Café picks**, **All no-props games** and **Everything (needs paper and pens)** are one-click presets. They are disabled while the location follows organisation defaults.
 - Existing locations keep the game list they already have.
+
+## Friends tier and Table Vote
+
+- **Most Likely To** and **Hot Takes** are two social no-props games (English and Najdi Arabic, clean and culturally neutral) written for groups of friends. Levels read as warm-up, social and deeper. Content: `src/content/friendsContent.ts`, `src/arabic/friendsContent.ts`. Both are in Café picks. Arabic wording needs native review.
+- **Table Vote** is a venue-only game where every guest plays on their own phone. One guest hosts a table (Would You Rather or Most Likely To) and shares a four-digit code; others join from the same venue page with a name. Everyone votes at the same time, the host reveals the results, and a shared scoreboard awards a point to the majority (Would You Rather) or to the most-voted player (Most Likely To).
+- It is available only on venue pages and only if the location's game list includes it (it is in Café picks). It is hidden from the public site.
+- Rooms live **in server memory only** (`server/railway/business/rooms.ts`): no names or votes are written to the database, rooms end after 3 hours (45 minutes idle), hold up to 12 players, and a venue can have at most 10 open. Only prompts from the shipped libraries are accepted, so nobody can push free text to other phones. Names are limited to 20 characters. Phones poll every 1.5 seconds.
+- Because rooms are in memory, a deploy or restart ends open tables, and the app must run as a single instance (Railway's default). Running several instances would need rooms moved to Postgres or Redis.
+- Not built: a venue-wide table-versus-table leaderboard and a trivia mode with correct answers.

@@ -6,7 +6,7 @@ async function aria(name){const b=d.querySelector(`[aria-label="${t(name)}"]`);a
 async function select(name,value){const l=[...d.querySelectorAll('label')].find(l=>l.textContent.startsWith(t(name)));assert(l,`Missing label ${name}`);const s=l.querySelector('select');assert(s);s.value=value;s.dispatchEvent(new w.Event('change',{bubbles:true}));await wait()}
 await click('العربية',true);assert.equal(d.documentElement.dir,'rtl');assert.equal(d.documentElement.lang,'ar-SA');assert.equal(d.querySelectorAll('.language-toggle').length,1);assert(d.body.textContent.includes('الرئيسية'));await click('How to Play',true);await click('Favourites',true);await click('Game Library',true);
 for(const testLocale of ['ar-SA','en']){if(testLocale==='en'){await click('English',true);await click('Game Library',true)}
-for(const game of w.qa.games){
+for(const game of w.qa.games.filter(g=>g.id!=='vote')){
  for(const level of ['Easy','Medium','Hard']){
   await click(game.name,true);
   if(game.id!=='speed'){await select('Difficulty',level);await click(game.collection==='none'||game.id==='scatter'?'Start Game':'Everyone ready? Let’s play')}

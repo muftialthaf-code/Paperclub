@@ -39,4 +39,4 @@ Family-friendly cafés, shisha-free daytime cafés, restaurants with long waits,
 - Pricing and billing are not built yet. Quote only what has been agreed in person.
 - Arabic copy is awaiting native-speaker review.
 - Impact on spend or dwell time is not yet measured. Do not quote numbers. Offer a pilot and share the report data.
-- Menu items appear in some games (trivia, Would You Rather, 5 Second Challenge, drawing and spoken prompts), not all 26.
+- Table Vote lets every guest play on their own phone. Menu items appear in some games (trivia, Would You Rather, 5 Second Challenge, drawing and spoken prompts), not all 26.
