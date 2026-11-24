@@ -149,3 +149,10 @@ Isolation is enforced in the API on every request (membership, role, location sc
 ## Migrations
 
 `0004_org_defaults.sql` and `0005_venue_qr.sql` are additive (new nullable columns and two new tables). Back up PostgreSQL before deploying, as with any schema change.
+
+## Café mode (quick start and game presets)
+
+- **One-tap start.** On a venue page, tapping a no-props game starts it immediately at Medium level with Player 1 and Player 2. There is no setup screen. Each no-props card has a small **Options** button that opens the normal setup (names, level, family mix, timers) for guests who want it. Paper games (Speed Drawing, Scattergories and so on) keep their setup screens.
+- **Café picks.** `src/business/cafePicks.ts` lists the quick, talk-and-laugh games that need no pens or paper: Would You Rather, 5 Second Challenge, Table Topics, Don't Say Yes or No, Take a Side, Two Truths and a Lie, Rapid Fire, Opposite Answers, Categories Countdown, Word Association and What Would You Do. New locations start with this list.
+- **Presets.** In the location's game list, **Café picks**, **All no-props games** and **Everything (needs paper and pens)** are one-click presets. They are disabled while the location follows organisation defaults.
+- Existing locations keep the game list they already have.

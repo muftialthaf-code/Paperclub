@@ -1,6 +1,7 @@
 import {createHash,createHmac,randomBytes,timingSafeEqual,createCipheriv,createDecipheriv} from 'node:crypto';
 import type {VenueBrand} from '../../../src/business/types';
 import {games} from '../../../src/engine';
+import {CAFE_PICKS} from '../../../src/business/cafePicks';
 export class BusinessError extends Error {constructor(public status:number,public code:string){super(code)}}
 export const fail=(status:number,code:string):never=>{throw new BusinessError(status,code)};
 export const hash=(s:string)=>createHash('sha256').update(s).digest('hex');
@@ -9,7 +10,7 @@ export const identifier=(v:unknown)=>typeof v==='string'&&/^[a-zA-Z0-9_-]{1,100}
 export function text(v:unknown,max=80){if(typeof v!=='string')return fail(400,'invalid_field');const s=v.normalize('NFC').trim();if(!s||s.length>max||/[\u0000-\u001f\u007f]/.test(s))return fail(400,'invalid_field');return s}
 export const email=(v:unknown)=>{const s=text(v,254).toLowerCase();if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s))return fail(400,'invalid_email');return s};
 export const iso=(value:Date|string)=>new Date(value).toISOString();
-export const blankBrand=(name:string):VenueBrand=>({displayName:name,welcomeEn:'Make room for a little play.',welcomeAr:'حيّاكم، خلّونا نلعب مع بعض.',primary:'#24365b',background:'#faf9f6',logoId:null,games:games.filter(g=>g.collection==='none').map(g=>g.id)});
+export const blankBrand=(name:string):VenueBrand=>({displayName:name,welcomeEn:'Make room for a little play.',welcomeAr:'حيّاكم، خلّونا نلعب مع بعض.',primary:'#24365b',background:'#faf9f6',logoId:null,games:CAFE_PICKS});
 function luminance(hex:string){const rgb=hex.slice(1).match(/../g)!.map(n=>parseInt(n,16)/255).map(n=>n<=.04045?n/12.92:((n+.055)/1.055)**2.4);return .2126*rgb[0]+.7152*rgb[1]+.0722*rgb[2]}
 
 function rgbToHsl(r:number,g:number,b:number){r/=255;g/=255;b/=255;const max=Math.max(r,g,b),min=Math.min(r,g,b),l=(max+min)/2;let h=0,sat=0;if(max!==min){const d=max-min;sat=l>.5?d/(2-max-min):d/(max+min);h=max===r?((g-b)/d+(g<b?6:0)):max===g?(b-r)/d+2:(r-g)/d+4;h*=60}return[h,sat,l]}

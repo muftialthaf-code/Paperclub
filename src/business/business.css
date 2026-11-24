@@ -90,3 +90,5 @@ details.business-card[open]>summary{margin-bottom:6px}
 .business-qr-item.disabled{border-style:dashed}
 .business-qr-off{background:#fde8e6!important;color:#7a1710!important;border:1px solid #f0b4ae;border-radius:10px;padding:12px 14px!important}
 @media(min-width:900px){.business-card-tools{grid-template-columns:minmax(260px,380px) minmax(0,1fr);column-gap:28px;align-items:start}.business-card-tools>.business-card-preview{grid-column:1;grid-row:1/span 4}.business-card-tools>*:not(.business-card-preview){grid-column:2}}
+
+.business-presets{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}.business-presets button{min-height:40px;padding:8px 14px;border:1px solid #c9c8bc;border-radius:999px;background:#fff;cursor:pointer}.business-presets button:disabled{opacity:.5;cursor:not-allowed}.venue-options{margin-inline-start:8px;min-height:32px;padding:4px 12px;border-radius:999px;border:1px solid currentColor;background:transparent;font-size:.85rem;cursor:pointer}
